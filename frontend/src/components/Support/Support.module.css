@@ -1,0 +1,293 @@
+.support {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 4rem 0;
+  padding-top: calc(4rem + 80px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 0.3s ease;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  color: white;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.supportForm,
+.faqSection {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #333333;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.categoryBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #333333;
+}
+
+.categoryBtn:hover {
+  border-color: #ff6b35;
+  background: rgba(255, 107, 53, 0.05);
+}
+
+.categoryBtn.active {
+  border-color: #ff6b35;
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b35;
+}
+
+.categoryIcon {
+  font-size: 1.2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  color: #333333;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input,
+.textarea {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333333;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #999999;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.submitBtn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #ff6b35, #ff8f65);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.faqItem {
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.faqItem:hover {
+  border-color: #ff6b35;
+  background: rgba(255, 107, 53, 0.02);
+}
+
+.faqQuestion {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
+.faqAnswer {
+  color: #666666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Dark mode styles */
+:global(.dark) .support {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+:global(.dark) .supportForm,
+:global(.dark) .faqSection {
+  background: #2a2a2a;
+}
+
+:global(.dark) .sectionTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .categoryBtn {
+  background: #3a3a3a;
+  border-color: #555555;
+  color: #ffffff;
+}
+
+:global(.dark) .categoryBtn:hover {
+  background: rgba(255, 107, 53, 0.1);
+}
+
+:global(.dark) .categoryBtn.active {
+  color: #ff6b35;
+}
+
+:global(.dark) .label {
+  color: #cccccc;
+}
+
+:global(.dark) .input,
+:global(.dark) .textarea {
+  background: #3a3a3a;
+  border-color: #555555;
+  color: #ffffff;
+}
+
+:global(.dark) .input::placeholder,
+:global(.dark) .textarea::placeholder {
+  color: #999999;
+}
+
+:global(.dark) .faqItem {
+  background: #3a3a3a;
+  border-color: #555555;
+}
+
+:global(.dark) .faqQuestion {
+  color: #ffffff;
+}
+
+:global(.dark) .faqAnswer {
+  color: #cccccc;
+}
+
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+  
+  .categories {
+    grid-template-columns: 1fr;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .supportForm,
+  .faqSection {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .supportForm,
+  .faqSection {
+    padding: 1rem;
+  }
+}
