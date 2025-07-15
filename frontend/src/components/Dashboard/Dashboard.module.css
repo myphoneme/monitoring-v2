@@ -1,6 +1,6 @@
 .dashboard {
   width: 100vw;
-  min-height: 100vh;
+  flex: 1 0 auto;
   padding: 4rem 0;
   padding-top: calc(4rem + 80px);
   background: #f8f9fa;

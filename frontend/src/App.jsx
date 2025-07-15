@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import Tools from './components/Tools/Tools';
 import Support from './components/Support/Support';
 import About from './components/About/About';
+import Footer from './components/Footer/Footer';
 import './App.css';
 
 function App() {
@@ -29,15 +30,18 @@ function App() {
 
   return (
     <Router>
-      <div className={`app ${isDarkMode ? 'dark' : 'light'}`}>
+      <div className={`app ${isDarkMode ? 'dark' : 'light'}`} style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
         <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/tools" element={<Tools />} />
-        </Routes>
+        <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/tools" element={<Tools />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   );

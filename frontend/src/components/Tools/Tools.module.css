@@ -1,8 +1,8 @@
 .tools {
   width: 100vw;
-  min-height: 100vh;
-  padding: 4rem 0;
-  padding-top: calc(4rem + 80px);
+  flex: 1 0 auto;
+  padding: 2.5rem 0;
+  padding-top: calc(2.5rem + 80px);
   background: #f8f9fa;
   transition: all 0.3s ease;
 }
@@ -20,14 +20,10 @@
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  color: #333333;
-  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #111111;
 }
 
 .subtitle {
@@ -42,7 +38,7 @@
 }
 
 .sectionTitle {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 2rem;
   color: #333333;
@@ -50,9 +46,9 @@
 
 .featuredGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
 }
 
 .toolCard {
@@ -74,14 +70,15 @@
 .toolCard.featured {
   background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
   border: 2px solid #ff6b35;
+  padding: 0.7rem;
 }
 
 .toolIcon {
-  font-size: 2.5rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
   background: rgba(255, 107, 53, 0.1);
-  width: 60px;
-  height: 60px;
+  width: 32px;
+  height: 32px;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -132,10 +129,18 @@
   margin-top: 4rem;
 }
 
+.categoriesRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .categoriesNav {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
@@ -167,6 +172,29 @@
   color: white;
 }
 
+.searchBarWrapper {
+  flex: 1 1 300px;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+.searchBar {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.searchBar:focus {
+  border-color: #ff6b35;
+}
+
 .toolsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -188,6 +216,7 @@
 
 :global(.dark) .sectionTitle {
   color: #ffffff;
+  font-size: 1.3rem;
 }
 
 :global(.dark) .toolCard {
@@ -226,6 +255,30 @@
 :global(.dark) .categoryBtn.active:hover {
   background: #e5512a;
   color: white;
+}
+
+:global(.dark) .searchBar {
+  background: #3a3a3a;
+  color: #fff;
+  border-color: #555555;
+}
+
+:global(.dark) .searchBar:focus {
+  border-color: #ff6b35;
+}
+
+@media (max-width: 900px) {
+  .categoriesRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .searchBarWrapper {
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    margin-top: 1rem;
+  }
 }
 
 @media (max-width: 768px) {

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import LocationIcon from '../../assets/LocationIcon';
+import MailIcon from '../../assets/MailIcon';
+import GlobeIcon from '../../assets/GlobeIcon';
 import styles from './Support.module.css';
 
 const Support = () => {
@@ -16,25 +19,6 @@ const Support = () => {
     { id: 'technical', name: 'Technical Issues', icon: '🔧' },
     { id: 'billing', name: 'Billing & Accounts', icon: '💳' },
     { id: 'feature', name: 'Feature Request', icon: '💡' }
-  ];
-
-  const faqs = [
-    {
-      question: "How do I reset my password?",
-      answer: "You can reset your password by clicking the 'Forgot Password' link on the login page and following the instructions sent to your email."
-    },
-    {
-      question: "How do I contact technical support?",
-      answer: "You can contact technical support through this form, email us at support@phoneme.com, or call our helpline at 1-800-PHONEME."
-    },
-    {
-      question: "What are your service hours?",
-      answer: "Our support team is available Monday through Friday, 9 AM to 6 PM EST. We respond to urgent technical issues 24/7."
-    },
-    {
-      question: "How do I update my account information?",
-      answer: "You can update your account information by logging into your dashboard and navigating to the 'Account Settings' section."
-    }
   ];
 
   const handleInputChange = (e) => {
@@ -150,15 +134,44 @@ const Support = () => {
             </form>
           </div>
 
-          <div className={styles.faqSection}>
-            <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
-            <div className={styles.faqList}>
-              {faqs.map((faq, index) => (
-                <div key={index} className={styles.faqItem}>
-                  <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                  <p className={styles.faqAnswer}>{faq.answer}</p>
+          <div className={styles.infoSection}>
+            <div className={styles.mapCard}>
+              <iframe
+                title="Advant Navis Business Park Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.019282019994!2d77.4144300754066!3d28.61393997567809!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ceffb6e2b6b2d%3A0x6e2b6b2d6e2b6b2d!2sAdvant%20Navis%20Business%20Park!5e0!3m2!1sen!2sin!4v1716460000000!5m2!1sen!2sin"
+                width="100%"
+                height="250"
+                style={{ border: 0, borderRadius: '12px', width: '100%' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+            <div className={styles.contactCards}>
+              <div className={styles.contactCard}>
+                <span className={styles.contactIcon}><LocationIcon /></span>
+                <div>
+                  <strong>Office Address</strong>
+                  <div>Phoneme Solution Pvt. Ltd.<br/>
+Advant Navis Business Park<br/>
+Tower B-614, Plot #7, Sector-142,<br/>
+Noida, Uttar Pradesh- 201307</div>
                 </div>
-              ))}
+              </div>
+              <div className={styles.contactCard}>
+                <span className={styles.contactIcon}><MailIcon /></span>
+                <div>
+                  <strong>Send email</strong>
+                  <div>Hr@myphoneme.com</div>
+                </div>
+              </div>
+              <div className={styles.contactCard}>
+                <span className={styles.contactIcon}><GlobeIcon /></span>
+                <div>
+                  <strong>Our Website</strong>
+                  <div><a href="https://myphoneme.com/" target="_blank" rel="noopener noreferrer">https://myphoneme.com/</a></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

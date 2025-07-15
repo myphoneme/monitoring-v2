@@ -44,17 +44,10 @@
   margin-right: auto;
 }
 
-.phonePart {
-  color: #333333;
-  transition: color 0.3s ease;
-}
-
-.mePart {
-  color: #ff6b35;
-}
-
-.header.dark .phonePart {
-  color: #ffffff;
+.logoImg {
+  height: 40px;
+  width: auto;
+  display: block;
 }
 
 .nav {

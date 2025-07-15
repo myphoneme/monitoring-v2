@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
+import phonemeLogo from '../../../phoneme_logo.png';
 
 const Header = ({ isDarkMode, toggleTheme }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,8 +13,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <span className={styles.phonePart}>PHONE</span>
-          <span className={styles.mePart}>ME</span>
+          <img src={phonemeLogo} alt="Phoneme Logo" className={styles.logoImg} />
         </Link>
         
         <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
