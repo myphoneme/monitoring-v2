@@ -7,6 +7,7 @@ import Tools from './components/Tools/Tools';
 import Support from './components/Support/Support';
 import About from './components/About/About';
 import Footer from './components/Footer/Footer';
+import BackupDashboard from './components/Veeambackup/BackupDashboard';
 import './App.css';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/support" element={<Support />} />
             <Route path="/tools" element={<Tools />} />
+            <Route path="/tools/veeam-backup" element={<BackupDashboard />} />
           </Routes>
         </div>
         <Footer />

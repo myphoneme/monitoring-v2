@@ -80,6 +80,15 @@ const Tools = () => {
       category: 'AI Tools',
       link: '/tools/information-extractor',
       featured: true
+    },
+    {
+      id: 12,
+      title: 'Veeam Backup Dashboard',
+      description: 'Monitor and manage Veeam backup operations.',
+      icon: '🖥️',
+      category: 'Monitoring',
+      link: '/tools/veeam-backup',
+      featured: true
     }
   ];
 
