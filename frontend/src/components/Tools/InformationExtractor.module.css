@@ -1,0 +1,89 @@
+.extractorWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  padding: 2rem 0;
+  box-sizing: border-box;
+}
+
+.extractorCard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.fileInput {
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.uploadButton {
+  background: #ff6b35;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.2s;
+}
+.uploadButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.uploadButton:not(:disabled):hover {
+  background: #e55a24;
+}
+
+.error {
+  color: #d32f2f;
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+  text-align: center;
+}
+.success {
+  color: #388e3c;
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .extractorCard {
+    padding: 1.2rem 0.5rem;
+    max-width: 98vw;
+    min-width: 0;
+  }
+  .title {
+    font-size: 1.2rem;
+  }
+  .subtitle {
+    font-size: 0.95rem;
+  }
+} 
