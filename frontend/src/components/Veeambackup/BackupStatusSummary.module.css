@@ -1,0 +1,504 @@
+/* Container and Layout */
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Section - Compressed */
+.header {
+  background: linear-gradient(135deg, #ff6b35 0%, #e5512a 100%);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
+  border-bottom: 2px solid #ff9966;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-weight: 500;
+}
+
+.summaryStats {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  text-align: center;
+  min-width: 45px;
+}
+
+.statCard.success {
+  border-left: 3px solid #10b981;
+}
+
+.statCard.error {
+  border-left: 3px solid #ef4444;
+}
+
+.statNumber {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+  margin-bottom: 0.05rem;
+}
+
+.statLabel {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Table Layout - More Compressed */
+.tableContainer {
+  padding: 0.2rem;
+  height: calc(100vh - 70px);
+}
+
+.statusTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.statusTable thead {
+  background: #fff5f0;
+}
+
+.statusTable th {
+  padding: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e5512a;
+  text-align: left;
+  border-bottom: 2px solid #ffd9c8;
+  width: 50%;
+}
+
+.workingHeader {
+  border-right: 1px solid #ffd9c8;
+  color: #059669;
+}
+
+.issuesHeader {
+  color: #dc2626;
+}
+
+.headerIcon {
+  margin-right: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.statusTable td {
+  padding: 0;
+  vertical-align: top;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  border-right: 1px solid #ffd9c8;
+}
+
+.workingColumn {
+  background: #f0fdf4;
+}
+
+.issuesColumn {
+  background: #fef2f2;
+  border-right: none;
+}
+
+/* Group Cards - Ultra Compressed */
+.groupCard {
+  background: white;
+  border: none;
+  border-bottom: 1px solid #ffe5d6;
+  margin: 0;
+  transition: background 0.2s ease;
+}
+
+.groupCard:hover {
+  background: #fffaf5;
+}
+
+.groupCard.success {
+  border-left: 3px solid #10b981;
+}
+
+.groupCard.success .groupCardHeader {
+  background: #f0fdf4;
+}
+
+.groupCard.success .groupCardHeader:hover {
+  background: #dcfce7;
+}
+
+.groupCard.error {
+  border-left: 3px solid #ef4444;
+}
+
+.groupCard.error .groupCardHeader {
+  background: #fef2f2;
+}
+
+.groupCard.error .groupCardHeader:hover {
+  background: #fee2e2;
+}
+
+.groupCardHeader {
+  padding: 0.25rem 0.4rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #fff3ec;
+  transition: background 0.2s ease;
+}
+
+.groupInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.groupIcon {
+  width: 16px;
+  height: 16px;
+  background: #ff6b35;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folderIcon {
+  font-size: 0.7rem;
+  filter: brightness(0) invert(1);
+}
+
+.groupDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02rem;
+}
+
+.groupName {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #e5512a;
+  margin: 0;
+}
+
+.groupCount {
+  font-size: 0.6rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.groupActions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.15rem 0.3rem;
+  background: #fff5f0;
+  border-radius: 8px;
+  border: 1px solid #ffd9c8;
+}
+
+.statusDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+}
+
+.statusDot.success {
+  background: #10b981;
+}
+
+.statusDot.error {
+  background: #ef4444;
+}
+
+.statusText {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.expandButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.15rem;
+  border-radius: 3px;
+}
+
+.expandButton:hover {
+  background: #fff3ec;
+}
+
+.chevron {
+  font-size: 0.6rem;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+/* VM List - Ultra Compressed */
+.vmList {
+  padding: 0;
+  background: #fffaf5;
+}
+
+.vmCard {
+  background: white;
+  border: none;
+  border-bottom: 1px solid #fff3ec;
+  margin: 0;
+}
+
+.vmCard:hover {
+  background: #fffaf5;
+}
+
+.vmHeader {
+  padding: 0.25rem 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vmInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1.2;
+  justify-content: center;
+  padding-left: 0.5rem;
+}
+
+.vmStatusIcon {
+  font-size: 0.75rem;
+}
+
+.vmDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02rem;
+}
+
+.vmName {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #e5512a;
+  margin: 0;
+}
+
+.vmLastBackup {
+  font-size: 0.55rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.vmStats {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-right: 0.5rem;
+  justify-content: center;
+  flex: 0.8;
+}
+
+.backupTypeIndicators {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.backupType {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.backupType.full {
+  background: #ff6b35;
+}
+
+.backupType.incremental {
+  background: #f59e0b;
+}
+
+.backupType.metadata {
+  background: #8b5cf6;
+}
+
+.totalBackups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.15rem 0.25rem;
+  background: #fff5f0;
+  border-radius: 3px;
+  border: 1px solid #ffd9c8;
+}
+
+.backupCount {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #e5512a;
+  line-height: 1;
+}
+
+.backupLabel {
+  font-size: 0.5rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Empty State - Ultra Compressed */
+.emptyState {
+  text-align: center;
+  padding: 1rem 0.8rem;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.emptyIcon {
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.emptyText {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Scrollbar - Orange theme */
+.workingColumn::-webkit-scrollbar,
+.issuesColumn::-webkit-scrollbar {
+  width: 3px;
+}
+
+.workingColumn::-webkit-scrollbar-track,
+.issuesColumn::-webkit-scrollbar-track {
+  background: #fff5f0;
+}
+
+.workingColumn::-webkit-scrollbar-thumb,
+.issuesColumn::-webkit-scrollbar-thumb {
+  background: #ffb088;
+  border-radius: 2px;
+}
+
+.workingColumn::-webkit-scrollbar-thumb:hover,
+.issuesColumn::-webkit-scrollbar-thumb:hover {
+  background: #ff9966;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding: 0.4rem;
+  }
+  
+  .summaryStats {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .statusTable,
+  .statusTable thead,
+  .statusTable tbody,
+  .statusTable th,
+  .statusTable td,
+  .statusTable tr {
+    display: block;
+  }
+  
+  .statusTable thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .statusTable td {
+    border: none;
+    position: relative;
+    padding: 0.2rem;
+    height: auto;
+    max-height: 40vh;
+  }
+  
+  .statusTable td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #e5512a;
+  }
+  
+  .workingColumn:before {
+    content: "✅ Working Backups";
+  }
+  
+  .issuesColumn:before {
+    content: "⚠️ Backup Issues";
+  }
+}

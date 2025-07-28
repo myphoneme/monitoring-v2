@@ -1,0 +1,54 @@
+.monthSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.label {
+  font-weight: 800;
+  color: #1e293b;
+  font-size: 1rem;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(30, 41, 59, 0.1);
+  letter-spacing: -0.2px;
+}
+
+.select {
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  color: #1e293b;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.06);
+  min-width: 180px;
+  font-size: 0.85rem;
+}
+
+.select:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(30, 41, 59, 0.08);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: #94a3b8;
+}
+
+.select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+@media (max-width: 768px) {
+  .monthSelector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .select {
+    min-width: auto;
+    width: 100%;
+  }
+}

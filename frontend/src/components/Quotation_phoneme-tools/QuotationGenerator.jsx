@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./QuotationGenerator.css";
 
-const API_BASE = "http://localhost:9100"; // Change if backend runs elsewhere
+const API_BASE = "http://localhost:9200"; // Change if backend runs elsewhere
 
 const initialForm = {
   customer_name: "",

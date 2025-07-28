@@ -1,0 +1,342 @@
+.tabularView {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Month Header */
+.monthHeader {
+  padding: 0.5rem 0.8rem;
+  background: #ff6b35;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  box-shadow: 0 2px 6px rgba(255,107,53,0.15);
+}
+
+.monthTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.quickStats {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.statItem {
+  background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Legend Section */
+.legend {
+  padding: 0.5rem 0.8rem;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.legendTitle {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.2rem;
+  font-size: 0.7rem;
+}
+
+.legendItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.legendItem {
+  font-size: 0.7rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  background: #f8fafc;
+  padding: 0.2rem 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.legendItem img {
+  width: 12px;
+  height: 12px;
+}
+
+/* Table Container */
+.tableContainer {
+  max-height: 75vh;
+  overflow: auto;
+  background: #fff;
+}
+
+/* Table */
+.backupTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  min-width: 1200px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Sticky top header */
+.backupTable thead {
+  position: sticky;
+  top: 0;
+  background: #fff5f0;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.backupTable th {
+  padding: 0.4rem 0.3rem;
+  text-align: center;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 1px solid #f1d5c2;
+  border-right: 1px solid #ffe5d6;
+  white-space: nowrap;
+  font-size: 0.7rem;
+}
+
+/* Group Header */
+.groupHeader {
+  width: 220px;
+  min-width: 220px;
+  text-align: left;
+  padding-left: 0.8rem;
+  position: sticky;
+  left: 0;
+  background: #fff5f0;
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.03);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 700;
+  color: #e5512a;
+}
+
+/* Day headers */
+.dayHeader {
+  width: 32px;
+  min-width: 32px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #555;
+  background: #fffaf3;
+}
+
+/* Expand cell */
+.expandCell {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+  position: sticky;
+  right: 0;
+  background: inherit;
+  z-index: 9;
+  box-shadow: -2px 0 4px rgba(0,0,0,0.03);
+}
+
+/* Group Row */
+.groupRow {
+  background: #fff;
+  color: #1a1a1a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-left: 3px solid #ff6b35;
+}
+
+.groupRow:hover {
+  background: #fff6f0;
+}
+
+.groupRow td {
+  padding: 0.5rem 0.3rem;
+  border-bottom: 1px solid rgba(255,107,53,0.1);
+  border-right: 1px solid rgba(255,107,53,0.08);
+}
+
+.groupCell {
+  position: sticky;
+  left: 0;
+  background: #ff6b35;
+  z-index: 9;
+  padding-left: 0.4rem;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.03);
+}
+
+.groupInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.groupName {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  margin: 0;
+}
+
+/* ✅ NEW: Group Stats Inline Row */
+.mergedStats {
+  display: flex;
+  justify-content: center;  /* ✅ Center all stat items */
+  align-items: center;      /* ✅ Keep them vertically aligned */
+  gap: 0.6rem; /* spacing between each stat */
+  flex-wrap: nowrap; /* stay in one line */
+  padding: 0.15rem 0.3rem;
+  background: #fffaf5;
+  border-radius: 4px;
+}
+
+.mergedStats .statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #444;
+  background: #fff3ec;
+  padding: 0.15rem 0.35rem;
+  border: 1px solid #ffd9c8;
+  border-radius: 8px;
+  white-space: nowrap; /* prevent wrapping */
+}
+
+.mergedStats .statIcon {
+  font-size: 0.8rem;
+}
+
+/* VM rows */
+.vmRow {
+  background: #fff;
+  transition: background 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.vmRow:hover {
+  background: #fff6f0;
+  border-left: 3px solid #ff6b35;
+}
+
+.vmRow:nth-child(even) {
+  background: #fdf7f3;
+}
+
+.vmRow td {
+  padding: 0.4rem 0.3rem;
+  border-bottom: 1px solid #f1d5c2;
+  border-right: 1px solid #ffe5d6;
+  vertical-align: middle;
+}
+
+.vmCell {
+  position: sticky;
+  left: 0;
+  background: inherit;
+  z-index: 8;
+  padding-left: 0.8rem;
+  min-width: 220px;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.02);
+}
+
+.vmName {
+  font-weight: 600;
+  color: #e5512a;
+  font-size: 0.75rem;
+  letter-spacing: -0.2px;
+}
+
+/* Day Cells */
+.dayCell {
+  text-align: center;
+  padding: 0.4rem 0.2rem;
+  width: 32px;
+}
+
+.dayIconContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: help;
+  transition: transform 0.15s ease;
+  padding: 0.1rem;
+  border-radius: 6px;
+}
+
+.dayIconContainer:hover {
+  transform: scale(1.05);
+  background: rgba(255,107,53,0.05);
+}
+
+.dayIcon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Scrollbar */
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.tableContainer::-webkit-scrollbar-track {
+  background: #fff5f0;
+}
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #ffb088;
+  border-radius: 4px;
+}
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #ff9966;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .monthHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .backupTable {
+    font-size: 0.7rem;
+  }
+  .groupHeader {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .groupHeader {
+    width: 180px;
+  }
+  .dayHeader {
+    width: 28px;
+    font-size: 0.6rem;
+  }
+  .vmName {
+    font-size: 0.7rem;
+  }
+}

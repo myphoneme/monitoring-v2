@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react'
-import DateSelector from './DateSelector'
-import GroupSection from './GroupSection'
-import GroupsView from './GroupsView'
+import MonthSelector from './MonthSelector'
+import TabularView from './TabularView'
+import BackupStatusSummary from './BackupStatusSummary'
 import styles from './BackupDashboard.module.css'
 
-function BackupDashboard() {
+function BackupDashboard({ onDataUpdate }) {
   const [backupData, setBackupData] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [selectedDate, setSelectedDate] = useState('')
-  const [expandedGroups, setExpandedGroups] = useState(new Set())
-  const [showGroupsView, setShowGroupsView] = useState(false)
+  const [selectedMonth, setSelectedMonth] = useState('')
+  const [activeView, setActiveView] = useState('dashboard') // ✅ Default is dashboard
 
   useEffect(() => {
     fetchBackupData()
   }, [])
+
+  useEffect(() => {
+    if (onDataUpdate && backupData && selectedMonth) {
+      onDataUpdate(backupData, selectedMonth)
+    }
+  }, [backupData, selectedMonth, onDataUpdate])
 
   const fetchBackupData = async () => {
     try {
@@ -26,12 +31,17 @@ function BackupDashboard() {
       }
 
       const data = await response.json()
-      const groupedData = groupBackupsByDateDirectoryAndVM(data)
+      console.log('Raw API data:', data)
+
+      // Group data by month, then by parent_directory, then by unique VM name, then by date
+      const groupedData = groupBackupsByMonthDirectoryVMAndDate(data)
+      console.log('Grouped data:', groupedData)
       setBackupData(groupedData)
 
-      const dates = Object.keys(groupedData).sort((a, b) => new Date(b) - new Date(a))
-      if (dates.length > 0) {
-        setSelectedDate(dates[0])
+      // Set the first available month as selected
+      const months = Object.keys(groupedData).sort((a, b) => new Date(b + '-01') - new Date(a + '-01'))
+      if (months.length > 0) {
+        setSelectedMonth(months[0])
       }
 
       setError(null)
@@ -43,20 +53,37 @@ function BackupDashboard() {
     }
   }
 
-  const groupBackupsByDateDirectoryAndVM = (data) => {
+  const groupBackupsByMonthDirectoryVMAndDate = (data) => {
     const grouped = {}
-    const vmMetadataMap = {}
 
     data.forEach((backup) => {
       const date = backup.last_modified.split(' ')[0]
-      const directory = backup.parent_directory
-      const vmName = extractUniqueVmName(backup.vm)
+      const month = date.substring(0, 7)
+      const day = parseInt(date.substring(8, 10))
 
-      if (!grouped[date]) grouped[date] = {}
-      if (!grouped[date][directory]) grouped[date][directory] = {}
-      if (!grouped[date][directory][vmName]) {
-        grouped[date][directory][vmName] = {
-          uniqueName: vmName,
+      if (!grouped[month]) {
+        grouped[month] = {}
+      }
+
+      const directory = backup.parent_directory
+
+      if (!grouped[month][directory]) {
+        grouped[month][directory] = {}
+      }
+
+      const uniqueVmName = extractUniqueVmName(backup.vm)
+
+      if (!grouped[month][directory][uniqueVmName]) {
+        grouped[month][directory][uniqueVmName] = {
+          uniqueName: uniqueVmName,
+          dates: {}
+        }
+      }
+
+      const vmGroup = grouped[month][directory][uniqueVmName]
+
+      if (!vmGroup.dates[day]) {
+        vmGroup.dates[day] = {
           metadata: false,
           full_backup: false,
           incremental_backup: false,
@@ -65,16 +92,12 @@ function BackupDashboard() {
         }
       }
 
-      const vmGroup = grouped[date][directory][vmName]
+      const dayData = vmGroup.dates[day]
+      if (backup.metadata) dayData.metadata = true
+      if (backup.full_backup) dayData.full_backup = true
+      if (backup.incremental_backup) dayData.incremental_backup = true
 
-      if (backup.metadata) {
-        vmGroup.metadata = true
-        vmMetadataMap[vmName] = { group: directory, vmName }
-      }
-      if (backup.full_backup) vmGroup.full_backup = true
-      if (backup.incremental_backup) vmGroup.incremental_backup = true
-
-      vmGroup.files.push({
+      dayData.files.push({
         filename: backup.vm,
         metadata: backup.metadata,
         full_backup: backup.full_backup,
@@ -82,29 +105,14 @@ function BackupDashboard() {
         last_modified: backup.last_modified
       })
 
-      if (new Date(backup.last_modified) > new Date(vmGroup.last_modified)) {
-        vmGroup.last_modified = backup.last_modified
+      if (new Date(backup.last_modified) > new Date(dayData.last_modified)) {
+        dayData.last_modified = backup.last_modified
       }
     })
 
-    Object.keys(grouped).forEach(date => {
-      Object.entries(vmMetadataMap).forEach(([vmName, { group }]) => {
-        if (!grouped[date][group]) grouped[date][group] = {}
-
-        if (!grouped[date][group][vmName]) {
-          grouped[date][group][vmName] = {
-            uniqueName: vmName,
-            metadata: false,
-            full_backup: false,
-            incremental_backup: false,
-            files: [],
-            last_modified: `${date} 00:00:00`
-          }
-        }
-      })
-
-      Object.keys(grouped[date]).forEach(directory => {
-        grouped[date][directory] = Object.values(grouped[date][directory])
+    Object.keys(grouped).forEach(month => {
+      Object.keys(grouped[month]).forEach(directory => {
+        grouped[month][directory] = Object.values(grouped[month][directory])
       })
     })
 
@@ -113,79 +121,43 @@ function BackupDashboard() {
 
   const extractUniqueVmName = (vmFileName) => {
     let cleanName = vmFileName.replace(/\.(vbk|vib|vbm)$/i, '')
-    cleanName = cleanName.replace(/\.\d{2,6}D\d{4}-\d{2}-\d{2}T\d{6}_[A-F0-9]+$/i, '')
+    cleanName = cleanName.replace(/\.\d+D\d{4}-\d{2}-\d{2}T\d{6}_[A-F0-9]+$/i, '')
     cleanName = cleanName.replace(/\.vm-\d+D\d{4}-\d{2}-\d{2}T\d{6}_[A-F0-9]+$/i, '')
     cleanName = cleanName.replace(/_[A-F0-9]{4,6}$/i, '')
-    return cleanName
+    cleanName = cleanName.replace(/D\d{4}-\d{2}-\d{2}T\d{6}.*$/i, '')
+    cleanName = cleanName.replace(/\d{4}-\d{2}-\d{2}T\d{6}.*$/i, '')
+    cleanName = cleanName.replace(/\.[A-F0-9]{8,}$/i, '')
+    cleanName = cleanName.replace(/[._]+$/, '')
+    return cleanName.trim()
   }
 
-  const toggleGroup = (groupName) => {
-    const newExpanded = new Set(expandedGroups)
-    if (newExpanded.has(groupName)) {
-      newExpanded.delete(groupName)
-    } else {
-      newExpanded.add(groupName)
-    }
-    setExpandedGroups(newExpanded)
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
+  const formatMonth = (monthString) => {
+    return new Date(monthString + '-01').toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      month: 'long'
     })
   }
 
-  const getOverallStats = () => {
-    const totalDates = Object.keys(backupData).length
-    let totalBackups = 0
-    let fullBackups = 0
+  const getSelectedMonthStats = () => {
+    if (!selectedMonth || !backupData[selectedMonth]) {
+      return { totalGroups: 0, totalVMs: 0, totalDays: 0 }
+    }
 
-    Object.values(backupData).forEach(dateData => {
-      Object.values(dateData).forEach(vms => {
-        vms.forEach(vm => {
-          totalBackups += vm.files.length
-          if (vm.full_backup) fullBackups += vm.files.filter(f => f.full_backup).length
+    const monthData = backupData[selectedMonth]
+    const totalGroups = Object.keys(monthData).length
+    let totalVMs = 0
+    const daysSet = new Set()
+
+    Object.values(monthData).forEach(vms => {
+      totalVMs += vms.length
+      vms.forEach(vm => {
+        Object.keys(vm.dates).forEach(day => {
+          daysSet.add(day)
         })
       })
     })
 
-    return { totalDates, totalBackups, fullBackups }
-  }
-
-  const getSelectedDateStats = () => {
-    if (!selectedDate || !backupData[selectedDate]) {
-      return { totalGroups: 0, totalVMs: 0, fullBackups: 0, incrementalBackups: 0, metadataFiles: 0 }
-    }
-
-    const dateData = backupData[selectedDate]
-    const totalGroups = Object.keys(dateData).length
-    let totalVMs = 0
-    let fullBackups = 0
-    let incrementalBackups = 0
-    let metadataFiles = 0
-
-    Object.values(dateData).forEach(vms => {
-      totalVMs += vms.length
-      vms.forEach(vm => {
-        if (vm.full_backup) fullBackups++
-        if (vm.incremental_backup) incrementalBackups++
-        if (vm.metadata) metadataFiles++
-      })
-    })
-
-    return { totalGroups, totalVMs, fullBackups, incrementalBackups, metadataFiles }
-  }
-
-  const navigateToGroupsView = () => setShowGroupsView(true)
-  const navigateBackToDashboard = () => setShowGroupsView(false)
-
-  if (showGroupsView) {
-    return (
-      <GroupsView backupData={backupData} onBack={navigateBackToDashboard} loading={loading} error={error} />
-    )
+    return { totalGroups, totalVMs, totalDays: daysSet.size }
   }
 
   if (loading) {
@@ -206,85 +178,94 @@ function BackupDashboard() {
           <div className={styles.errorIcon}>⚠️</div>
           <h2 className={styles.errorTitle}>Error Loading Data</h2>
           <p className={styles.errorMessage}>{error}</p>
-          <button className={styles.retryButton} onClick={fetchBackupData}>Try Again</button>
+          <button 
+            className={styles.retryButton}
+            onClick={fetchBackupData}
+          >
+            Try Again
+          </button>
         </div>
       </div>
     )
   }
 
-  const overallStats = getOverallStats()
-  const selectedDateStats = getSelectedDateStats()
-  const availableDates = Object.keys(backupData).sort((a, b) => new Date(b) - new Date(a))
+  const selectedMonthStats = getSelectedMonthStats()
+  const availableMonths = Object.keys(backupData).sort((a, b) => new Date(b + '-01') - new Date(a + '-01'))
 
   return (
     <div className={styles.dashboard}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>
-            <img src="https://cdn-icons-png.flaticon.com/512/9780/9780637.png" alt="VM Icon" style={{height: '2.5rem', width: '2.5rem', marginRight: '0.7rem', verticalAlign: 'middle'}} />
+      <header className={styles.compactHeader}>
+        <div className={styles.headerLeft}>
+          <button className={styles.backButton} onClick={() => window.history.back()} title="Go Back">
+            ←
+          </button>
+          <h1 className={styles.compactTitle}>
+            <span className={styles.veeamLogo}>🔒</span>
             Veeam Backup Dashboard
           </h1>
-          <p className={styles.subtitle}>Monitor and manage your backup operations</p>
+        </div>
+
+        <div className={styles.headerRight}>
+          {/* ✅ Toggle Buttons */}
+          <button 
+            className={`${styles.navButton} ${activeView === 'dashboard' ? styles.activeNav : ''}`} 
+            onClick={() => setActiveView('dashboard')}
+          >
+            Dashboard
+          </button>
+          <button 
+            className={`${styles.navButton} ${activeView === 'status' ? styles.activeNav : ''}`} 
+            onClick={() => setActiveView('status')}
+          >
+            Status
+          </button>
         </div>
       </header>
 
       <main className={styles.main}>
-        <div className={styles.statsOverview}>
-          <div className={styles.statCard}><div className={styles.statNumber}>{overallStats.totalDates}</div><div className={styles.statLabel}>Total Dates</div></div>
-          <div className={styles.statCard}><div className={styles.statNumber}>{overallStats.totalBackups}</div><div className={styles.statLabel}>Total Backups</div></div>
-          <div className={styles.statCard}><div className={styles.statNumber}>{overallStats.fullBackups}</div><div className={styles.statLabel}>Full Backups</div></div>
+        {/* ✅ Keep MonthSelector + Refresh always visible */}
+        <div className={styles.compactControls}>
+          <MonthSelector
+            months={availableMonths}
+            selectedMonth={selectedMonth}
+            onMonthSelect={setSelectedMonth}
+            formatMonth={formatMonth}
+          />
+          <button 
+            className={styles.refreshButton}
+            onClick={fetchBackupData}
+            disabled={loading}
+          >
+            <span className={styles.refreshIcon}>🔄</span>
+            Refresh
+          </button>
         </div>
 
-        <div className={styles.controlsSection}>
-          <DateSelector dates={availableDates} selectedDate={selectedDate} onDateSelect={setSelectedDate} formatDate={formatDate} />
-          <div className={styles.buttonGroup}>
-            <button className={styles.groupsViewButton} onClick={navigateToGroupsView}>
-              <span className={styles.buttonIcon}>
-                <img src="https://cdn-icons-png.flaticon.com/512/5564/5564268.png" alt="Groups View Icon" style={{height: '1.3em', width: '1.3em', verticalAlign: 'middle'}} />
-              </span>
-              Groups View
-            </button>
-            <button className={styles.refreshButton} onClick={fetchBackupData} disabled={loading}>
-              <span className={styles.refreshIcon}>
-                <img src="https://cdn-icons-png.flaticon.com/512/6756/6756708.png" alt="Refresh Icon" style={{height: '1.3em', width: '1.3em', verticalAlign: 'middle'}} />
-              </span>
-              Refresh Data
-            </button>
-          </div>
-        </div>
-
-        {selectedDate && backupData[selectedDate] && (
-          <div className={styles.selectedDateSection}>
-            <div className={styles.selectedDateHeader}>
-              <h2 className={styles.selectedDateTitle}>{formatDate(selectedDate)}</h2>
-              <div className={styles.selectedDateStats}>
-                <span className={styles.statBadge}><span className={styles.statIcon}>📁</span>{selectedDateStats.totalGroups} Groups</span>
-                <span className={styles.statBadge}><span className={styles.statIcon}>🖥️</span>{selectedDateStats.totalVMs} VMs</span>
-                <span className={styles.statBadge}><span className={styles.statIcon}>💾</span>{selectedDateStats.fullBackups} Full</span>
-                <span className={styles.statBadge}><span className={styles.statIcon}>📈</span>{selectedDateStats.incrementalBackups} Incremental</span>
-                <span className={styles.statBadge}><span className={styles.statIcon}>📄</span>{selectedDateStats.metadataFiles} Metadata</span>
-              </div>
-            </div>
-
-            <div className={styles.groupsList}>
-              {Object.entries(backupData[selectedDate]).map(([groupName, vms]) => (
-                <GroupSection
-                  key={groupName}
-                  groupName={groupName}
-                  backups={vms}
-                  isExpanded={expandedGroups.has(groupName)}
-                  onToggle={() => toggleGroup(groupName)}
-                />
-              ))}
-            </div>
-          </div>
+        {/* ✅ Show TabularView or BackupStatusSummary based on activeView */}
+        {activeView === 'dashboard' && selectedMonth && backupData[selectedMonth] && (
+          <TabularView 
+            data={backupData[selectedMonth]}
+            selectedMonth={selectedMonth}
+            formatMonth={formatMonth}
+            stats={selectedMonthStats}
+          />
         )}
 
-        {availableDates.length === 0 && (
+        {activeView === 'status' && (
+          <BackupStatusSummary 
+            data={backupData} 
+            selectedMonth={selectedMonth} 
+            formatMonth={formatMonth} 
+          />
+        )}
+
+        {availableMonths.length === 0 && (
           <div className={styles.noDataContainer}>
             <div className={styles.noDataIcon}>📊</div>
             <h3 className={styles.noDataTitle}>No Backup Data Found</h3>
-            <p className={styles.noDataMessage}>No backup records are currently available. Please check your backup system or try refreshing.</p>
+            <p className={styles.noDataMessage}>
+              No backup records available. Try refreshing.
+            </p>
           </div>
         )}
       </main>
