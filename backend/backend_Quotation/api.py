@@ -4,9 +4,11 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import date
 import pandas as pd
-from . import core_logic
+from backend_Quotation import core_logic
 import tempfile
 import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
 
@@ -158,8 +160,8 @@ def generate_pdf(data: QuotationRequest):
     main_tax = round(main_taxable_value * 0.18, 2)
     main_grand_total = main_taxable_value + main_tax
     main_amount_words = core_logic.get_amount_in_words(main_grand_total)
-    # Logo path (optional, can be empty or static)
-    logo_path = os.path.join(os.path.dirname(__file__), "phoneme_logo.png")
+    # Logo path (absolute)
+    logo_path = os.path.join(BASE_DIR, "phoneme_logo.png")
     pdf_bytes = core_logic.generate_quotation_pdf(
         logo_path,
         data.customer_info.dict(),

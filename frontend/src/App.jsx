@@ -8,7 +8,7 @@ import Support from './components/Support/Support';
 import About from './components/About/About';
 import Footer from './components/Footer/Footer';
 import BackupDashboard from './components/Veeambackup/BackupDashboard';
-import AppQuotationGenerator from './components/Quotation_phoneme-tools/my-react-app/AppQuotationGenerator';
+import QuotationGenerator from './components/Quotation_phoneme-tools/QuotationGenerator';
 import InformationExtractor from './components/Tools/InformationExtractor'; // <-- Add this import
 import './App.css';
 
@@ -43,7 +43,7 @@ function App() {
             <Route path="/support" element={<Support />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/veeam-backup" element={<BackupDashboard />} />
-            <Route path="/tools/quotation-generator" element={<AppQuotationGenerator isDarkMode={isDarkMode} />} />
+            <Route path="/tools/quotation-generator" element={<QuotationGenerator isDarkMode={isDarkMode} />} />
             <Route path="/tools/information-extractor" element={<InformationExtractor />} /> {/* <-- Add this route */}
           </Routes>
         </div>

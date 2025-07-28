@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./App.css";
+import "./QuotationGenerator.css";
 
-const API_BASE = "http://localhost:9200"; // Change if backend runs elsewhere
+const API_BASE = "http://localhost:9100"; // Change if backend runs elsewhere
 
 const initialForm = {
   customer_name: "",
@@ -24,7 +24,7 @@ const initialForm = {
   apply_discount: false,
 };
 
-function App({ isDarkMode }) {
+function QuotationGenerator({ isDarkMode }) {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -327,4 +327,4 @@ function Table({ data }) {
   );
 }
 
-export default App;
+export default QuotationGenerator; 
