@@ -89,6 +89,15 @@ const Tools = () => {
       category: 'Monitoring',
       link: '/tools/veeam-backup',
       featured: true
+    },
+    {
+      id: 13,
+      title: 'VM Monitoring - Dashboard',
+      description: 'Monitor and manage virtual machines .',
+      icon: '🖥️',
+      category: 'Monitoring',
+      link: '/tools/vm-monitoring',
+      featured: true
     }
   ];
 

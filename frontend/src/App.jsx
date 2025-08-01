@@ -8,9 +8,11 @@ import Support from './components/Support/Support';
 import About from './components/About/About';
 import Footer from './components/Footer/Footer';
 import BackupDashboard from './components/Veeambackup/BackupDashboard';
+// import vmmonitor from './components/Vmmonitoring/vmmonitor';
 import QuotationGenerator from './components/Quotation_phoneme-tools/QuotationGenerator';
 import InformationExtractor from './components/Tools/InformationExtractor'; // <-- Add this import
 import './App.css';
+import VmMonitor from '././components/Vmmonitoring/VmMonitor';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -43,6 +45,7 @@ function App() {
             <Route path="/support" element={<Support />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/veeam-backup" element={<BackupDashboard />} />
+            <Route path="/tools/vm-monitoring" element={<VmMonitor/>} />
             <Route path="/tools/quotation-generator" element={<QuotationGenerator isDarkMode={isDarkMode} />} />
             <Route path="/tools/information-extractor" element={<InformationExtractor />} /> {/* <-- Add this route */}
           </Routes>
