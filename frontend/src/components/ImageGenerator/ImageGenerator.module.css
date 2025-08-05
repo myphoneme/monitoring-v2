@@ -1,0 +1,17 @@
+.loading-bar{
+  width: 0px;
+  height: 8px;
+  background: orange;
+}
+.loading-text{
+  font-size: 18px;
+}
+.loading-bar-full{
+  width: 400px;
+   height: 8px;
+  background: orange;
+  transition: 15s;
+}
+.display-none{
+  display: none;
+}

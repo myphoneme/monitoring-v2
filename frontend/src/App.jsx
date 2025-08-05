@@ -11,6 +11,8 @@ import BackupDashboard from './components/Veeambackup/BackupDashboard';
 // import vmmonitor from './components/Vmmonitoring/vmmonitor';
 import QuotationGenerator from './components/Quotation_phoneme-tools/QuotationGenerator';
 import InformationExtractor from './components/Tools/InformationExtractor'; // <-- Add this import
+import ImageGenerator from './components/ImageGenerator/ImageGenerator';
+import IpCheck from './components/IpCheck/IpCheck';
 import './App.css';
 import VmMonitor from '././components/Vmmonitoring/VmMonitor';
 
@@ -48,6 +50,8 @@ function App() {
             <Route path="/tools/vm-monitoring" element={<VmMonitor/>} />
             <Route path="/tools/quotation-generator" element={<QuotationGenerator isDarkMode={isDarkMode} />} />
             <Route path="/tools/information-extractor" element={<InformationExtractor />} /> {/* <-- Add this route */}
+            <Route path="/tools/image-generator" element={<ImageGenerator />} />
+            <Route path="/tools/ip-checker" element={<IpCheck/>} />
           </Routes>
         </div>
         <Footer />

@@ -98,6 +98,24 @@ const Tools = () => {
       category: 'Monitoring',
       link: '/tools/vm-monitoring',
       featured: true
+    },
+    {
+      id: 14,
+      title: 'Image Generator',
+      description: 'Generate Customized Images.',
+      icon: '🖥️',
+      category: 'AI Tools',
+      link: '/tools/image-generator',
+      featured: true
+    },
+    {
+      id: 15,
+      title: 'VM IP CHECKER',
+      description: 'Check IP Reachable or Not.',
+      icon: '🖥️',
+      category: 'AI Tools',
+      link: '/tools/ip-checker',
+      featured: true
     }
   ];
 
