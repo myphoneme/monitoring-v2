@@ -7,6 +7,7 @@ import jobOfferImg from '../../../job-offer.png';
 const Tools = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [searchTerm, setSearchTerm] = useState('');
+  const [compactView, setCompactView] = useState(false);
 
   const tools = [
     {
@@ -93,7 +94,7 @@ const Tools = () => {
     {
       id: 13,
       title: 'VM Monitoring - Dashboard',
-      description: 'Monitor and manage virtual machines .',
+      description: 'Monitor and manage virtual machines.',
       icon: '🖥️',
       category: 'Monitoring',
       link: '/tools/vm-monitoring',
@@ -180,15 +181,29 @@ const Tools = () => {
               />
             </div>
           </div>
-          
+
+          {/* 👇 Compact View Toggle */}
+          <div className={styles.viewToggle}>
+            <label>
+              <input
+                type="checkbox"
+                checked={compactView}
+                onChange={() => setCompactView(!compactView)}
+              />
+              Compact View
+            </label>
+          </div>
+
           <div className={styles.toolsGrid}>
             {filteredTools.map((tool) => (
-              <div key={tool.id} className={styles.toolCard}>
+              <div key={tool.id} className={`${styles.toolCard} ${compactView ? styles.compact : ''}`}>
                 <div className={styles.toolIcon}>{tool.icon}</div>
                 <div className={styles.toolInfo}>
                   <span className={styles.toolCategory}>{tool.category}</span>
                   <h3 className={styles.toolTitle}>{tool.title}</h3>
-                  <p className={styles.toolDescription}>{tool.description}</p>
+                  {!compactView && (
+                    <p className={styles.toolDescription}>{tool.description}</p>
+                  )}
                   <Link to={tool.link} className={styles.toolLink}>
                     Launch Tool →
                   </Link>

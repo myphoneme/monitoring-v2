@@ -1,323 +1,372 @@
+/* General Layout */
 .tools {
-  width: 100vw;
-  flex: 1 0 auto;
-  padding: 2.5rem 0;
-  padding-top: calc(2.5rem + 80px);
+  padding: 70px 1rem 2rem 1rem;
   background: #f8f9fa;
-  transition: all 0.3s ease;
+  min-height: 100vh;
 }
 
 .container {
-  width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .title {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  color: #111111;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1a1a1a;
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #666666;
-  max-width: 600px;
-  margin: 0 auto;
+  font-size: 1rem;
+  color: #555;
 }
 
+/* Featured Tools */
 .featuredSection {
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .sectionTitle {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: #333333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ff6b35;
 }
 
 .featuredGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 0.7rem;
-  margin-bottom: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.featured {
+  background: #fff;
+  padding: 1.2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  display: flex;
+  gap: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.featured:hover {
+  transform: translateY(-3px);
+  border-color: #ff6b35;
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.1);
+}
+
+/* All Tools Section */
+.allToolsSection {
+  margin-bottom: 4rem;
+}
+
+.categoriesRow {
+  position: sticky;
+  top: 60px;
+  z-index: 10;
+  background: #f7f7f8;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.categoriesNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.categoryBtn {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.categoryBtn:hover {
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b35;
+  border-color: #ff6b35;
+}
+
+.active {
+  background: #ff6b35;
+  color: white;
+  border-color: #ff6b35;
+}
+
+.searchBarWrapper {
+  flex-grow: 1;
+  max-width: 300px;
+}
+
+.searchBar {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* Grid */
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
 }
 
 .toolCard {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.75rem;
+  padding: 1rem;
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+  gap: 1rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .toolCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-}
-
-.toolCard.featured {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border: 2px solid #ff6b35;
-  padding: 0.7rem;
+  transform: translateY(-2px);
+  border-color: #ff6b35;
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.1);
 }
 
 .toolIcon {
-  font-size: 1.3rem;
-  flex-shrink: 0;
-  background: rgba(255, 107, 53, 0.1);
-  width: 32px;
-  height: 32px;
-  border-radius: 12px;
+  font-size: 2rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.toolInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.toolCategory {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.toolTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+}
+
+.toolDescription {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.toolLink {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #ff6b35;
+  text-decoration: none;
+}
+
+.toolLink:hover {
+  text-decoration: underline;
+  color: #e5512a;
+}
+
+/* View Toggle */
+.viewToggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.viewToggle input[type="checkbox"] {
+  margin-right: 0.4rem;
+  transform: scale(1.1);
+  accent-color: #ff6b35;
+}
+
+/* Compact View */
+.compact {
+  padding: 0.7rem;
+  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.compact .toolIcon {
+  font-size: 1.4rem !important;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.toolInfo {
+.compact .toolInfo {
   flex: 1;
 }
 
-.toolCategory {
-  display: inline-block;
-  background: #ff6b35;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.toolTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #333333;
-}
-
-.toolDescription {
-  color: #666666;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.toolLink {
-  color: #ff6b35;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.toolLink:hover {
-  color: #e5512a;
-  text-decoration: underline;
-}
-
-.allToolsSection {
-  margin-top: 4rem;
-}
-
-.categoriesRow {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.categoriesNav {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.categoryBtn {
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  color: #333333;
-}
-
-.categoryBtn:hover {
-  border-color: #ff6b35;
-  background: rgba(255, 107, 53, 0.05);
-  color: #333333;
-}
-
-.categoryBtn.active {
-  background: #ff6b35;
-  color: white;
-  border-color: #ff6b35;
-}
-
-.categoryBtn.active:hover {
-  background: #e5512a;
-  color: white;
-}
-
-.searchBarWrapper {
-  flex: 1 1 300px;
-  display: flex;
-  justify-content: flex-end;
-  min-width: 200px;
-  margin-bottom: 0;
-}
-
-.searchBar {
-  width: 100%;
-  max-width: 400px;
-  padding: 0.75rem 1.25rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
+.compact .toolTitle {
   font-size: 1rem;
-  outline: none;
-  transition: border-color 0.3s;
+  margin: 0;
 }
 
-.searchBar:focus {
-  border-color: #ff6b35;
+.compact .toolCategory {
+  font-size: 0.7rem;
+  margin-bottom: 0.25rem;
 }
 
-.toolsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
+.compact .toolDescription {
+  display: none;
 }
 
-/* Dark mode styles */
+.compact .toolLink {
+  font-size: 0.75rem;
+  padding-top: 0.3rem;
+  display: inline-block;
+  color: #ff6b35;
+}
+
+/* Gradient Buttons */
+.buttonPrimary {
+  background: linear-gradient(135deg, #ff6b35, #ff8f65);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.buttonPrimary:hover {
+  background: linear-gradient(135deg, #e5512a, #ff6b35);
+}
+
+.cardHighlight {
+  background: linear-gradient(145deg, #fffbe0, #fff4b3);
+  border: 1px solid #ffd700;
+}
+
+.badge {
+  background: #ff6b35;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.veeamHighlight {
+  border: 1px solid #ff6b1a;
+  background: rgba(255, 107, 53, 0.05);
+  color: #c58062;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+/* Dark Mode */
 :global(.dark) .tools {
   background: #1a1a1a;
 }
 
-:global(.dark) .title {
-  color: #ffffff;
-}
-
-:global(.dark) .subtitle {
-  color: #cccccc;
-}
-
+:global(.dark) .title,
+:global(.dark) .toolTitle,
 :global(.dark) .sectionTitle {
-  color: #ffffff;
-  font-size: 1.3rem;
+  color: #f7f7f8;
 }
 
-:global(.dark) .toolCard {
+:global(.dark) .subtitle,
+:global(.dark) .toolDescription,
+:global(.dark) .toolCategory {
+  color: #ccc;
+}
+
+:global(.dark) .toolCard,
+:global(.dark) .featured {
   background: #2a2a2a;
-}
-
-:global(.dark) .toolCard.featured {
-  background: linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%);
-  border-color: #ff6b35;
-}
-
-:global(.dark) .toolTitle {
-  color: #ffffff;
-}
-
-:global(.dark) .toolDescription {
-  color: #cccccc;
+  border-color: #555;
 }
 
 :global(.dark) .categoryBtn {
-  background: #3a3a3a;
-  border-color: #555555;
-  color: #ffffff;
+  background: transparent;
+  border: 1px solid #555;
+  color: #ccc;
 }
 
-:global(.dark) .categoryBtn:hover {
-  background: rgba(255, 107, 53, 0.1);
-  color: #ffffff;
-}
-
-:global(.dark) .categoryBtn.active {
+:global(.dark) .categoryBtn:hover,
+:global(.dark) .active {
   background: #ff6b35;
-  color: white;
-}
-
-:global(.dark) .categoryBtn.active:hover {
-  background: #e5512a;
-  color: white;
-}
-
-:global(.dark) .searchBar {
-  background: #3a3a3a;
   color: #fff;
-  border-color: #555555;
-}
-
-:global(.dark) .searchBar:focus {
   border-color: #ff6b35;
 }
 
-@media (max-width: 900px) {
-  .categoriesRow {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  .searchBarWrapper {
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    margin-top: 1rem;
-  }
+:global(.dark) .toolLink {
+  color: #ff8800;
 }
 
-@media (max-width: 768px) {
-  .title {
-    font-size: 2.5rem;
-  }
-  
-  .featuredGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .toolsGrid {
-    grid-template-columns: 1fr;
-  }
-  
+:global(.dark) .toolIcon {
+  background: #333;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .featured,
   .toolCard {
     flex-direction: column;
-    text-align: center;
+    gap: 0.75rem;
   }
-  
+
   .toolIcon {
-    margin: 0 auto;
-  }
-  
-  .categoriesNav {
-    justify-content: center;
+    align-self: flex-start;
   }
 }
 
-@media (max-width: 480px) {
-  .title {
-    font-size: 2rem;
-  }
-  
-  .subtitle {
-    font-size: 1rem;
-  }
-  
-  .toolCard {
-    padding: 1.5rem;
-  }
+
+:global(.dark) .categoriesRow {
+  background: #222;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.05);
+}
+
+:global(.dark) .searchBar {
+  background: #333;
+  border: 1px solid #555;
+  color: #eee;
+}
+
+:global(.dark) .searchBar::placeholder {
+  color: #aaa;
+}
+
+:global(.dark) .viewToggle {
+  color: #ccc;
+}
+
+:global(.dark) .viewToggle input[type="checkbox"] {
+  accent-color: #ff6b35;
 }
