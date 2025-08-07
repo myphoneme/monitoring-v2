@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './About.module.css';
+import about from '../../assets/about.png';
 
 const About = () => {
   const values = [
@@ -31,7 +32,8 @@ const About = () => {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             <img 
-              src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+              // src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+              src={about}
               alt="IT team collaboration" 
               className={styles.aboutImage}
             />

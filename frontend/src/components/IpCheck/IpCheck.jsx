@@ -80,7 +80,7 @@ const IpCheck = () => {
       </button>
     <div style={{ padding: '6rem' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        VM IP <span style={{ color: 'orange' }}>Checker</span>
+        VM IP <span style={{ color: '#ff6b35' }}>Checker</span>
       </h1>
 
       {/* Manual IP check section (right aligned) */}
@@ -102,7 +102,7 @@ const IpCheck = () => {
           disabled={manualLoading}
           style={{
             padding: '10px 20px',
-            backgroundColor: 'orange',
+            backgroundColor: '#ff6b35',
             border: 'none',
             color: '#fff',
             fontWeight: 'bold',
@@ -160,7 +160,7 @@ const IpCheck = () => {
           disabled={vmLoading}
           style={{
             padding: '10px 30px',
-            backgroundColor: 'orange',
+            backgroundColor: '#ff6b35',
             border: 'none',
             color: '#fff',
             fontWeight: 'bold',

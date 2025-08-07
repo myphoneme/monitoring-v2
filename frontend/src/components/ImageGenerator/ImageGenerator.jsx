@@ -7,7 +7,8 @@ const ImageGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [imageUrl, setImageUrl] = useState('/');
   const inputRef = useRef(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);         // For button state
+  const [imageLoading, setImageLoading] = useState(false); // For image loader
   const navigate = useNavigate();
   const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -27,6 +28,7 @@ const ImageGenerator = () => {
     if (inputRef.current.value === '') return;
 
     setLoading(true);
+    setImageLoading(true);
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -46,11 +48,12 @@ const ImageGenerator = () => {
     const data_array = data.data;
     setImageUrl(data_array[0].url);
     setLoading(false);
+    // Do not set imageLoading false here — wait for <img onLoad>
   };
 
   return (
-    <div style={{ backgroundColor: '#f8f9fa', position: 'relative', minHeight: '100vh'}}>
-      {/* 🔙 Arrow Only Back Button in Top-Left */}
+    <div style={{ backgroundColor: '#f8f9fa', position: 'relative', minHeight: '100vh' }}>
+      {/* 🔙 Back Button */}
       <button
         onClick={() => navigate(-1)}
         style={{
@@ -63,7 +66,6 @@ const ImageGenerator = () => {
           cursor: 'pointer',
           color: '#333',
           padding: '3rem',
-        
         }}
         aria-label="Go Back"
       >
@@ -72,7 +74,7 @@ const ImageGenerator = () => {
 
       <div style={{ padding: '6rem', maxWidth: '1000px', margin: 'auto' }}>
         <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          AI Image <span style={{ color: 'orange' }}>Generator</span>
+          AI Image <span style={{ color: '#ff6b35' }}>Generator</span>
         </h1>
 
         <div
@@ -106,7 +108,7 @@ const ImageGenerator = () => {
               disabled={!prompt || loading}
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: 'orange',
+                backgroundColor: '#ff6b35',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -126,23 +128,28 @@ const ImageGenerator = () => {
               alt="Generated"
               className="generated-image"
               style={{ width: '100%', maxWidth: '400px', height: 'auto' }}
+              onLoad={() => setImageLoading(false)}
+              onError={() => setImageLoading(false)}
             />
 
-            <div className={styles.loading}></div>
-            <div className={loading ? styles['loading-bar-full'] : styles['loading-bar']}></div>
-            <div className={loading ? styles['loading-text'] : styles['display-none']}>
-              Loading...
-            </div>
+            {/* Orange Loader shown until image fully loads */}
+            {imageLoading && (
+              <>
+                <div className={styles.loading}></div>
+                <div className={styles['loading-bar-full']}></div>
+                <div className={styles['loading-text']}>Loading...</div>
+              </>
+            )}
 
             {/* Download Button */}
-            {imageUrl !== '/' && !loading && (
+            {imageUrl !== '/' && !imageLoading && (
               <button
                 onClick={downloadImage}
                 style={{
                   display: 'inline-block',
                   marginTop: '1rem',
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: 'orange',
+                  backgroundColor: '#ff6b35',
                   color: 'white',
                   borderRadius: '6px',
                   fontWeight: 'bold',
