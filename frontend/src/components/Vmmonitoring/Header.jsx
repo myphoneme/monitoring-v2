@@ -1,8 +1,11 @@
 import React from 'react';
-import { Monitor, Server, Activity, BarChart3, Grid3X3, Database, TrendingUp, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Monitor, Grid3X3, Database, TrendingUp, XCircle, ArrowLeft } from 'lucide-react'; // Added ArrowLeft
 import styles from '../../styles/Header.module.css';
 
 const Header = ({ activeTab, setActiveTab }) => {
+  const navigate = useNavigate(); // Hook for navigation
+
   const navigationItems = [
     {
       id: 'dashboard',
@@ -33,6 +36,12 @@ const Header = ({ activeTab, setActiveTab }) => {
   return (
     <div className={styles.headerContainer}>
       <div className={styles.brandSection}>
+        {/* 🔙 Back Button */}
+        <button className={styles.backButton} onClick={() => navigate(-1)} title="Go Back">
+          <ArrowLeft size={20} />
+        </button>
+
+        {/* 🖥️ Brand Logo */}
         <div className={styles.logo}>
           <Monitor className={styles.logoIcon} />
           <div className={styles.brandText}>

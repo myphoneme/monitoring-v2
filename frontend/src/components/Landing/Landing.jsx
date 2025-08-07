@@ -1,57 +1,75 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Landing.module.css';
+import quotationImg from '../../../quotation.png';
+import jobOfferImg from '../../../job-offer.png';
 
 const Landing = () => {
-  const quickAccessItems = [
+  const quickAccessItems = [ 
     {
-      id: 1,
-      title: 'HR Portal',
-      description: 'Access your HR information and manage your benefits.',
-      icon: '📱',
-      link: '/dashboard',
-      color: '#ff6b35'
-    },
-    {
-      id: 2,
-      title: 'IT Support',
-      description: 'Get help with IT issues and access support resources.',
-      icon: '💻',
-      link: '/support',
-      color: '#4CAF50'
-    },
-    {
-      id: 3,
-      title: 'Project Management',
-      description: 'Manage your projects and collaborate with your team.',
-      icon: '📋',
-      link: '/tools',
-      color: '#2196F3'
-    },
-    {
-      id: 4,
+      id: 9,
       title: 'Quotation Generator',
-      description: 'Generate quotations for clients and projects.',
-      icon: '📊',
-      link: '/tools',
-      color: '#FF9800'
+      description: 'Create and download professional quotations for clients easily.',
+      icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
+      category: 'Utilities',
+      link: '/tools/quotation-generator',
+      featured: true
     },
     {
-      id: 5,
-      title: 'Employee Directory',
-      description: 'Find contact information for your colleagues.',
-      icon: '📱',
-      link: '/tools',
-      color: '#9C27B0'
+      id: 10,
+      title: 'Offer Letter Generator',
+      description: 'Generate customized offer letters for new hires quickly.',
+      icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
+      category: 'HR',
+      link: '/tools/offer-letter-generator',
+      featured: true
     },
     {
-      id: 6,
-      title: 'Benefits Information',
-      description: 'View and manage your benefits information.',
-      icon: '🎯',
-      link: '/tools',
-      color: '#F44336'
+      id: 11,
+      title: 'Information Extractor',
+      description: 'Extract key information from documents or text automatically.',
+      icon: '🔍',
+      category: 'AI Tools',
+      link: '/tools/information-extractor',
+      featured: true
+    },
+    {
+      id: 12,
+      title: 'Veeam Backup Dashboard',
+      description: 'Monitor and manage Veeam backup operations.',
+      icon: '🖥️',
+      category: 'Monitoring',
+      link: '/tools/veeam-backup',
+      featured: true
+    },
+    {
+      id: 13,
+      title: 'VM Monitoring - Dashboard',
+      description: 'Monitor and manage virtual machines.',
+      icon: '🖥️',
+      category: 'Monitoring',
+      link: '/tools/vm-monitoring',
+      featured: true
+    },
+    {
+      id: 14,
+      title: 'Image Generator',
+      description: 'Generate Customized Images.',
+      icon: '🖥️',
+      category: 'AI Tools',
+      link: '/tools/image-generator',
+      featured: true
     }
+    // ,
+    // {
+    //   id: 15,
+    //   title: 'VM IP CHECKER',
+    //   description: 'Check IP Reachable or Not.',
+    //   icon: '🖥️',
+    //   category: 'AI Tools',
+    //   link: '/tools/ip-checker',
+    //   featured: true
+    // }
   ];
 
   return (
@@ -93,11 +111,17 @@ const Landing = () => {
           <div className={styles.quickAccessGrid}>
             {quickAccessItems.map((item) => (
               <Link key={item.id} to={item.link} className={styles.accessCard}>
-                <div className={styles.cardIcon} style={{ color: item.color }}>
-                  {item.icon}
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIconWrapper}>
+                    {item.icon}
+                  </div>
+                  {item.featured && (
+                    <span className={styles.featuredBadge}>⭐ Featured</span>
+                  )}
                 </div>
                 <h3 className={styles.cardTitle}>{item.title}</h3>
                 <p className={styles.cardDescription}>{item.description}</p>
+                <span className={styles.categoryBadge}>{item.category}</span>
               </Link>
             ))}
           </div>

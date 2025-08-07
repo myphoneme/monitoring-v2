@@ -15,10 +15,10 @@ const Support = () => {
   });
 
   const categories = [
-    { id: 'general', name: 'General Support', icon: '💬' },
-    { id: 'technical', name: 'Technical Issues', icon: '🔧' },
-    { id: 'billing', name: 'Billing & Accounts', icon: '💳' },
-    { id: 'feature', name: 'Feature Request', icon: '💡' }
+    { id: 'general', name: 'General', icon: '💬' },
+    { id: 'technical', name: 'Technical', icon: '🔧' },
+    { id: 'billing', name: 'Billing', icon: '💳' },
+    { id: 'feature', name: 'Feature', icon: '💡' }
   ];
 
   const handleInputChange = (e) => {
@@ -31,7 +31,6 @@ const Support = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission
     console.log('Form submitted:', formData);
     alert('Thank you for your message! We will get back to you soon.');
     setFormData({
@@ -47,15 +46,13 @@ const Support = () => {
     <div className={styles.support}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.title}>Support Center</h1>
-          <p className={styles.subtitle}>
-            We're here to help you with any questions or issues you may have
-          </p>
+          <h1 className={styles.title}>Support</h1>
+          <p className={styles.subtitle}>We're here to assist you</p>
         </div>
 
         <div className={styles.content}>
           <div className={styles.supportForm}>
-            <h2 className={styles.sectionTitle}>Get in Touch</h2>
+            <h2 className={styles.sectionTitle}>Contact Us</h2>
             
             <div className={styles.categories}>
               {categories.map((category) => (
@@ -82,7 +79,7 @@ const Support = () => {
                     onChange={handleInputChange}
                     required
                     className={styles.input}
-                    placeholder="Your full name"
+                    placeholder="Your name"
                   />
                 </div>
                 <div className={styles.formGroup}>
@@ -110,7 +107,7 @@ const Support = () => {
                   onChange={handleInputChange}
                   required
                   className={styles.input}
-                  placeholder="Brief description of your issue"
+                  placeholder="Issue description"
                 />
               </div>
 
@@ -123,13 +120,13 @@ const Support = () => {
                   onChange={handleInputChange}
                   required
                   className={styles.textarea}
-                  placeholder="Please describe your issue in detail..."
-                  rows="5"
+                  placeholder="Describe your issue..."
+                  rows="3"
                 ></textarea>
               </div>
 
               <button type="submit" className={styles.submitBtn}>
-                Send Message
+                Send
               </button>
             </form>
           </div>
@@ -140,8 +137,8 @@ const Support = () => {
                 title="Advant Navis Business Park Map"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.019282019994!2d77.4144300754066!3d28.61393997567809!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ceffb6e2b6b2d%3A0x6e2b6b2d6e2b6b2d!2sAdvant%20Navis%20Business%20Park!5e0!3m2!1sen!2sin!4v1716460000000!5m2!1sen!2sin"
                 width="100%"
-                height="250"
-                style={{ border: 0, borderRadius: '12px', width: '100%' }}
+                height="150"
+                style={{ border: 0, borderRadius: '8px', width: '100%' }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -151,25 +148,22 @@ const Support = () => {
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><LocationIcon /></span>
                 <div>
-                  <strong>Office Address</strong>
-                  <div>Phoneme Solution Pvt. Ltd.<br/>
-Advant Navis Business Park<br/>
-Tower B-614, Plot #7, Sector-142,<br/>
-Noida, Uttar Pradesh- 201307</div>
+                  <strong>Office</strong>
+                  <div>Phoneme Solution<br/>Advant Navis, Sector-142,<br/>Noida, UP-201307</div>
                 </div>
               </div>
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><MailIcon /></span>
                 <div>
-                  <strong>Send email</strong>
+                  <strong>Email</strong>
                   <div>Hr@myphoneme.com</div>
                 </div>
               </div>
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><GlobeIcon /></span>
                 <div>
-                  <strong>Our Website</strong>
-                  <div><a href="https://myphoneme.com/" target="_blank" rel="noopener noreferrer">https://myphoneme.com/</a></div>
+                  <strong>Website</strong>
+                  <div><a href="https://myphoneme.com/" target="_blank" rel="noopener noreferrer">myphoneme.com</a></div>
                 </div>
               </div>
             </div>

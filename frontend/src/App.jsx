@@ -13,6 +13,7 @@ import QuotationGenerator from './components/Quotation_phoneme-tools/QuotationGe
 import InformationExtractor from './components/Tools/InformationExtractor'; // <-- Add this import
 import ImageGenerator from './components/ImageGenerator/ImageGenerator';
 import IpCheck from './components/IpCheck/IpCheck';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 import VmMonitor from '././components/Vmmonitoring/VmMonitor';
 
@@ -37,6 +38,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className={`app ${isDarkMode ? 'dark' : 'light'}`} style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
         <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>

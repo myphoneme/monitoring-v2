@@ -101,11 +101,19 @@
   cursor: pointer;
 }
 
+/* .getStartedBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
+  background: linear-gradient(135deg, #e5512a, #ff6b35);
+} */
+
 .getStartedBtn:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
   background: linear-gradient(135deg, #e5512a, #ff6b35);
+  color: #333333; /* <-- this line is the fix */
 }
+
 
 .quickAccessSection {
   width: 100vw;
@@ -289,4 +297,47 @@
   .accessCard {
     padding: 0.7rem; /* reduced from 1.5rem */
   }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+  position: relative;
+}
+
+.cardIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+}
+
+.featuredBadge {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.6rem;
+  background: #ff6b35;
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.categoryBadge {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.7rem;
+  background: #e0e0e0;
+  color: #333;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
