@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const IpCheck = () => {
   const [manualIp, setManualIp] = useState('');
@@ -6,6 +7,7 @@ const IpCheck = () => {
   const [manualResult, setManualResult] = useState(null);
   const [vmLoading, setVmLoading] = useState(false);
   const [manualLoading, setManualLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Ping function
   const checkPing = async (ip) => {
@@ -56,6 +58,26 @@ const IpCheck = () => {
   };
 
   return (
+     <div style={{ backgroundColor: '#f8f9fa', position: 'relative', minHeight: '100vh'}}>
+      {/* 🔙 Arrow Only Back Button in Top-Left */}
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          position: 'absolute',
+          top: '1.5rem',
+          left: '1.5rem',
+          background: 'none',
+          border: 'none',
+          fontSize: '2rem',
+          cursor: 'pointer',
+          color: '#333',
+          padding: '3rem',
+        
+        }}
+        aria-label="Go Back"
+      >
+        ←
+      </button>
     <div style={{ padding: '6rem' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>
         VM IP <span style={{ color: 'orange' }}>Checker</span>
@@ -189,6 +211,7 @@ const IpCheck = () => {
           </tbody>
         </table>
       )}
+    </div>
     </div>
   );
 };
