@@ -3,6 +3,8 @@ import MonthSelector from './MonthSelector'
 import TabularView from './TabularView'
 import BackupStatusSummary from './BackupStatusSummary'
 import styles from './BackupDashboard.module.css'
+import { ArrowLeft } from 'lucide-react' // or wherever you're importing icons from
+import { useNavigate } from 'react-router-dom';
 
 function BackupDashboard({ onDataUpdate }) {
   const [backupData, setBackupData] = useState({})
@@ -10,6 +12,7 @@ function BackupDashboard({ onDataUpdate }) {
   const [error, setError] = useState(null)
   const [selectedMonth, setSelectedMonth] = useState('')
   const [activeView, setActiveView] = useState('dashboard') // ✅ Default is dashboard
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBackupData()
@@ -196,9 +199,10 @@ function BackupDashboard({ onDataUpdate }) {
     <div className={styles.dashboard}>
       <header className={styles.compactHeader}>
         <div className={styles.headerLeft}>
-          <button className={styles.backButton} onClick={() => window.history.back()} title="Go Back">
-            ←
+          <button className={styles.backButton} onClick={() => navigate(-1)} title="Go Back">
+            <ArrowLeft size={16} />
           </button>
+
           <h1 className={styles.compactTitle}>
             <span className={styles.veeamLogo}>🔒</span>
             Veeam Backup Dashboard

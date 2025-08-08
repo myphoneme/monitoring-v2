@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Search, Activity, CheckCircle, XCircle, AlertCircle, Loader2 } from 'lucide-react';
+import styles from './IpCheck.module.css';
 
 const IpCheck = () => {
   const [manualIp, setManualIp] = useState('');
@@ -24,7 +26,7 @@ const IpCheck = () => {
     }
   };
 
-  // 🔁 Check all VMs
+  // Check all VMs
   const handleCheckAllVMs = async () => {
     setVmLoading(true);
     setVmResults({}); // clear old results
@@ -47,9 +49,9 @@ const IpCheck = () => {
     }
   };
 
-  // 🔍 Manual IP check
+  // Manual IP check
   const handleManualCheck = async () => {
-    if (!manualIp) return;
+    if (!manualIp.trim()) return;
     setManualLoading(true);
     const result = await checkPing(manualIp);
     setManualResult({ [manualIp]: result }); 
@@ -57,161 +59,174 @@ const IpCheck = () => {
     setManualLoading(false);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleManualCheck();
+    }
+  };
+
+  const getStatusIcon = (result) => {
+    if (result === '✅ true') return <CheckCircle className={styles.iconSuccess} />;
+    if (result === '❌ false') return <XCircle className={styles.iconError} />;
+    return <AlertCircle className={styles.iconWarning} />;
+  };
+
+  const getStatusClass = (result) => {
+    if (result === '✅ true') return styles.statusSuccess;
+    if (result === '❌ false') return styles.statusError;
+    return styles.statusWarning;
+  };
+
   return (
-     <div style={{ backgroundColor: '#f8f9fa', position: 'relative', minHeight: '100vh'}}>
-      {/* 🔙 Arrow Only Back Button in Top-Left */}
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          position: 'absolute',
-          top: '1.5rem',
-          left: '1.5rem',
-          background: 'none',
-          border: 'none',
-          fontSize: '2rem',
-          cursor: 'pointer',
-          color: '#333',
-          padding: '3rem',
-        
-        }}
-        aria-label="Go Back"
-      >
-        ←
-      </button>
-    <div style={{ padding: '6rem' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        VM IP <span style={{ color: '#ff6b35' }}>Checker</span>
-      </h1>
-
-      {/* Manual IP check section (right aligned) */}
-      <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
-        <input
-          type="text"
-          placeholder="Enter IP address"
-          value={manualIp}
-          onChange={(e) => setManualIp(e.target.value)}
-          style={{
-            padding: '10px',
-            fontSize: '16px',
-            width: '250px',
-            marginRight: '10px',
-          }}
-        />
+    <div className={styles.container}>
+      {/* Header */}
+      <div className={styles.header}>
         <button
-          onClick={handleManualCheck}
-          disabled={manualLoading}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#ff6b35',
-            border: 'none',
-            color: '#fff',
-            fontWeight: 'bold',
-            cursor: manualLoading ? 'not-allowed' : 'pointer',
-          }}
+          onClick={() => navigate(-1)}
+          className={styles.backButton}
+          aria-label="Go Back"
         >
-          {manualLoading ? 'Checking...' : 'Check IP'}
+          <ArrowLeft size={20} />
         </button>
+        <h1 className={styles.title}>
+          <Activity className={styles.titleIcon} />
+          VM IP <span className={styles.titleAccent}>Checker</span>
+        </h1>
       </div>
 
-      {/* Manual Result (Separate Table) */}
-      {manualResult && (
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginTop: '20px',
-            fontSize: '16px',
-          }}
-        >
-          <thead>
-            <tr style={{ background: '#f0f0f0' }}>
-              <th style={{ border: '1px solid #ccc', padding: '10px' }}>IP</th>
-              <th style={{ border: '1px solid #ccc', padding: '10px' }}>RESULT</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(manualResult).map(([ip, result]) => (
-              <tr key={ip}>
-                <td style={{ border: '1px solid #ccc', padding: '10px' }}>{ip}</td>
-                <td
-                  style={{
-                    border: '1px solid #ccc',
-                    padding: '10px',
-                    color:
-                      result === '✅ true'
-                        ? 'green'
-                        : result === '❌ false'
-                        ? 'red'
-                        : 'orange',
-                  }}
-                >
-                  {result}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div className={styles.content}>
+        {/* Manual IP Check Section */}
+        <div className={styles.manualSection}>
+          <div className={styles.inputGroup}>
+            <div className={styles.inputWrapper}>
+              <Search className={styles.inputIcon} />
+              <input
+                type="text"
+                placeholder="Enter IP address (e.g., 192.168.1.1)"
+                value={manualIp}
+                onChange={(e) => setManualIp(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className={styles.input}
+              />
+            </div>
+            <button
+              onClick={handleManualCheck}
+              disabled={manualLoading || !manualIp.trim()}
+              className={`${styles.button} ${styles.buttonPrimary}`}
+            >
+              {manualLoading ? (
+                <>
+                  <div className={styles.spinner} />
+                  Checking...
+                </>
+              ) : (
+                'Check IP'
+              )}
+            </button>
+          </div>
+        </div>
 
-      {/* Check All VMs button */}
-      <div style={{ textAlign: 'center', margin: '2rem 0' }}>
-        <button
-          onClick={handleCheckAllVMs}
-          disabled={vmLoading}
-          style={{
-            padding: '10px 30px',
-            backgroundColor: '#ff6b35',
-            border: 'none',
-            color: '#fff',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            cursor: vmLoading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {vmLoading ? 'Checking All...' : 'Check All VMs'}
-        </button>
+        {/* Manual Result Table */}
+        {manualResult && (
+          <div className={styles.tableSection}>
+            <h3 className={styles.sectionTitle}>Manual Check Result</h3>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(manualResult).map(([ip, result]) => (
+                    <tr key={ip}>
+                      <td className={styles.ipCell}>{ip}</td>
+                      <td className={styles.statusCell}>
+                        {getStatusIcon(result)}
+                      </td>
+                      <td className={`${styles.resultCell} ${getStatusClass(result)}`}>
+                        {result.replace(/[✅❌⚠️]/g, '').trim()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Check All VMs Button */}
+        <div className={styles.actionSection}>
+          <button
+            onClick={handleCheckAllVMs}
+            disabled={vmLoading}
+            className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonLarge}`}
+          >
+            {vmLoading ? (
+              <>
+                <Loader2 className={styles.loadingIcon} />
+                Checking All VMs...
+              </>
+            ) : (
+              <>
+                <Activity size={18} />
+                Check All VMs
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Loading Overlay for VM Check */}
+        {vmLoading && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.loadingCard}>
+              <Loader2 className={styles.loadingSpinner} />
+              <h3 className={styles.loadingTitle}>Checking All VMs</h3>
+              <p className={styles.loadingText}>
+                Please wait while we ping all VM instances...
+              </p>
+              <div className={styles.progressBar}>
+                <div className={styles.progressFill}></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VM Results Table */}
+        {Object.keys(vmResults).length > 0 && (
+          <div className={styles.tableSection}>
+            <h3 className={styles.sectionTitle}>
+              VM Status Results ({Object.keys(vmResults).length} VMs)
+            </h3>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(vmResults).map(([ip, result]) => (
+                    <tr key={ip}>
+                      <td className={styles.ipCell}>{ip}</td>
+                      <td className={styles.statusCell}>
+                        {getStatusIcon(result)}
+                      </td>
+                      <td className={`${styles.resultCell} ${getStatusClass(result)}`}>
+                        {result.replace(/[✅❌⚠️]/g, '').trim()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* VM Results Table */}
-      {Object.keys(vmResults).length > 0 && (
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginTop: '10px',
-            fontSize: '16px',
-          }}
-        >
-          <thead>
-            <tr style={{ background: '#f0f0f0' }}>
-              <th style={{ border: '1px solid #ccc', padding: '10px' }}>IP</th>
-              <th style={{ border: '1px solid #ccc', padding: '10px' }}>RESULT</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(vmResults).map(([ip, result]) => (
-              <tr key={ip}>
-                <td style={{ border: '1px solid #ccc', padding: '10px' }}>{ip}</td>
-                <td
-                  style={{
-                    border: '1px solid #ccc',
-                    padding: '10px',
-                    color:
-                      result === '✅ true'
-                        ? 'green'
-                        : result === '❌ false'
-                        ? 'red'
-                        : 'orange',
-                  }}
-                >
-                  {result}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
     </div>
   );
 };

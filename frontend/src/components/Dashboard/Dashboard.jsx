@@ -1,57 +1,74 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Dashboard.module.css';
+import quotationImg from '../../../quotation.png';
+import jobOfferImg from '../../../job-offer.png';
 
 const Dashboard = () => {
   const quickAccessItems = [
     {
-      id: 1,
-      title: 'HR Portal',
-      description: 'Access your HR information and manage your benefits.',
-      icon: '📱',
-      link: '/hr-portal',
-      color: '#ff6b35'
-    },
-    {
-      id: 2,
-      title: 'IT Support',
-      description: 'Get help with IT issues and access support resources.',
-      icon: '💻',
-      link: '/it-support',
-      color: '#4CAF50'
-    },
-    {
-      id: 3,
-      title: 'Project Management',
-      description: 'Manage your projects and collaborate with your team.',
-      icon: '📋',
-      link: '/project-management',
-      color: '#2196F3'
-    },
-    {
-      id: 4,
-      title: 'Quotation Generator',
-      description: 'Generate quotations for clients and projects.',
-      icon: '📊',
-      link: '/quotation-generator',
-      color: '#FF9800'
-    },
-    {
-      id: 5,
-      title: 'Employee Directory',
-      description: 'Find contact information for your colleagues.',
-      icon: '📱',
-      link: '/employee-directory',
-      color: '#9C27B0'
-    },
-    {
-      id: 6,
-      title: 'Benefits Information',
-      description: 'View and manage your benefits information.',
-      icon: '🎯',
-      link: '/benefits',
-      color: '#F44336'
-    }
+          id: 9,
+          title: 'Quotation Generator',
+          description: 'Create and download professional quotations for clients easily.',
+          icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
+          category: 'Utilities',
+          link: '/tools/quotation-generator',
+          featured: true
+        },
+        {
+          id: 10,
+          title: 'Offer Letter Generator',
+          description: 'Generate customized offer letters for new hires quickly.',
+          icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
+          category: 'HR',
+          link: '/tools/offer-letter-generator',
+          featured: false
+        },
+        {
+          id: 11,
+          title: 'Information Extractor',
+          description: 'Extract key information from documents or text automatically.',
+          icon: '🔍',
+          category: 'AI Tools',
+          link: '/tools/information-extractor',
+          featured: false
+        },
+        {
+          id: 12,
+          title: 'Veeam Backup Dashboard',
+          description: 'Monitor and manage Veeam backup operations.',
+          icon: '🖥️',
+          category: 'Monitoring',
+          link: '/tools/veeam-backup',
+          featured: true
+        },
+        {
+          id: 13,
+          title: 'VM Monitoring - Dashboard',
+          description: 'Monitor and manage virtual machines.',
+          icon: '🖥️',
+          category: 'Monitoring',
+          link: '/tools/vm-monitoring',
+          featured: true
+        },
+        {
+          id: 14,
+          title: 'Image Generator',
+          description: 'Generate Customized Images.',
+          icon: '🖥️',
+          category: 'AI Tools',
+          link: '/tools/image-generator',
+          featured: true
+        },
+        {
+          id: 15,
+          title: 'VM IP CHECKER',
+          description: 'Check IP Reachable or Not.',
+          icon: '🖥️',
+          category: 'AI Tools',
+          link: '/tools/ip-checker',
+          featured: false
+        }
   ];
 
   return (

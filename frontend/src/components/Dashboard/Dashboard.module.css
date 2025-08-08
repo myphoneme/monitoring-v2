@@ -1,29 +1,29 @@
 .dashboard {
   width: 100vw;
-  flex: 1 0 auto;
-  padding: 4rem 0;
-  padding-top: calc(4rem + 80px);
+  padding: 2rem 0;
+  /* padding-top: calc(2rem + 64px); */
+  padding-top: calc(1rem + 64px); /* reduced */
   background: #f8f9fa;
   transition: all 0.3s ease;
 }
 
 .container {
-  width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1rem;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
+  /* margin-bottom: 2rem; */
+  margin: 0 0 2rem 0; /* removed top margin */
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  color: #333333;
+  font-size: 2.25rem;
+  font-weight: 700;
+  /* margin-bottom: 0.5rem; */
+  margin: 0 0 0.5rem 0; /* no top margin */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -31,148 +31,122 @@
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #666666;
-  max-width: 600px;
+  font-size: 1rem;
+  color: #666;
   margin: 0 auto;
+  max-width: 480px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e0e0e0;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ff6b35, #ff8f65);
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   border-color: #ff6b35;
 }
 
-.card:hover::before {
-  opacity: 1;
-}
-
 .cardIcon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: block;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .cardTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #333333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .cardDescription {
-  color: #666666;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 }
 
 .cardLink {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #ff6b35;
-  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  border: 1.5px solid #ff6b35;
+  border-radius: 6px;
   text-decoration: none;
   color: #ff6b35;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  background: transparent;
+  font-weight: 500;
+  transition: 0.2s ease;
 }
 
 .cardLink:hover {
   background: #ff6b35;
-  color: white;
-  transform: translateY(-2px);
+  color: #fff;
 }
 
-/* Dark mode styles */
+/* Dark mode */
 :global(.dark) .dashboard {
-  background: #1a1a1a;
+  background: #121212;
 }
 
 :global(.dark) .title {
-  color: #ffffff;
+  color: #fff;
 }
 
 :global(.dark) .subtitle {
-  color: #cccccc;
+  color: #aaa;
 }
 
 :global(.dark) .card {
-  background: #2a2a2a;
-  border-color: #555555;
+  background: #1e1e1e;
+  border-color: #333;
 }
 
-:global(.dark) .cardTitle {
-  color: #ffffff;
-}
-
+:global(.dark) .cardTitle,
 :global(.dark) .cardDescription {
-  color: #cccccc;
+  color: #eee;
 }
 
 :global(.dark) .card:hover {
   border-color: #ff6b35;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
-  
+
   .title {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
-  
+
   .card {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
-  
+
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
-  
+
   .card {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 }

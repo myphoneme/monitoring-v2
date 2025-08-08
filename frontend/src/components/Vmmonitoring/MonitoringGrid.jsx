@@ -36,15 +36,29 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const [selectedModal, setSelectedModal] = useState(null);
   const [timeMode, setTimeMode] = useState('AM');
   const [stats, setStats] = useState({ total: 0, reachable: 0, unreachable: 0 });
+  const [showBackToTop, setShowBackToTop] = useState(false);
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [onlineFilter, setOnlineFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [projectFilter, setProjectFilter] = useState('all');
   const [availableProjects, setAvailableProjects] = useState([]);
   const [vmMasterData, setVmMasterData] = useState([]);
-  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Load VM master data on component mount
+  useEffect(() => {
+    const loadVMMasterData = async () => {
+      try {
+        const masterData = await fetchVMMasterData();
+        setVmMasterData(masterData);
+      } catch (error) {
+        console.error('Error loading VM master data:', error);
+      }
+    };
+    loadVMMasterData();
+  }, []);
 
   // Generate hours for AM/PM
   const getHoursForMode = (mode) => {
@@ -87,55 +101,113 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
       setAvailableDates(sortedDates);
       
       // Get unique projects
-      const projects = [...new Set(allStatusData.map(item => item.project).filter(p => p && p !== 'N/A'))];
+      const statusProjects = allStatusData.map(item => item.project).filter(p => p && p !== 'N/A');
+      const masterProjects = vmMasterData.map(vm => vm.project_name).filter(p => p && p !== 'N/A');
+      const projects = [...new Set([...statusProjects, ...masterProjects])];
       setAvailableProjects(projects.sort());
       
       if (!selectedDate && sortedDates.length > 0) {
         setSelectedDate(sortedDates[0]);
       }
     }
-  }, [allStatusData, selectedDate]);
+  }, [allStatusData, vmMasterData, selectedDate]);
 
   useEffect(() => {
-    if (selectedDate && allStatusData.length > 0) {
+    if (selectedDate && (allStatusData.length > 0 || vms.length > 0)) {
       processGridData();
       calculateStats();
     }
-  }, [selectedDate, allStatusData, timeMode, searchTerm, statusFilter, severityFilter, projectFilter]);
+  }, [selectedDate, allStatusData, vms, vmMasterData, timeMode, searchTerm, statusFilter, onlineFilter, severityFilter, projectFilter]);
 
   const processGridData = () => {
+    // Get all VMs from master data, status data, and current monitoring data
+    const allVMsMap = new Map();
+    
+    // Add VMs from master data first (this ensures we get ALL VMs)
+    vmMasterData.forEach(vm => {
+      const vmKey = `${vm.ip}-${vm.vm_name}`;
+      allVMsMap.set(vmKey, {
+        ip: vm.ip,
+        vm_name: vm.vm_name,
+        project: vm.project_name || 'N/A',
+        cluster: vm.cluster || 'N/A',
+        hasStatusData: false,
+        hasMasterData: true
+      });
+    });
+    
+    // Add VMs from status data
+    allStatusData.forEach(item => {
+      const vmKey = `${item.ip}-${item.vm_name}`;
+      if (allVMsMap.has(vmKey)) {
+        // Update existing entry
+        const existing = allVMsMap.get(vmKey);
+        allVMsMap.set(vmKey, {
+          ...existing,
+          hasStatusData: true
+        });
+      } else {
+        // Add new entry
+        allVMsMap.set(vmKey, {
+          ip: item.ip,
+          vm_name: item.vm_name,
+          project: item.project,
+          cluster: item.cluster,
+          hasStatusData: true,
+          hasMasterData: false
+        });
+      }
+    });
+    
+    // Update with current monitoring data
+    vms.forEach(vm => {
+      const vmKey = `${vm.ip}-${vm.vm_master?.vm_name || 'Unknown VM'}`;
+      if (allVMsMap.has(vmKey)) {
+        // Update existing entry
+        const existing = allVMsMap.get(vmKey);
+        allVMsMap.set(vmKey, {
+          ...existing,
+          currentStatus: vm.status,
+          hasCurrentData: true
+        });
+      } else {
+        // Add new entry
+        allVMsMap.set(vmKey, {
+          ip: vm.ip,
+          vm_name: vm.vm_master?.vm_name || 'Unknown VM',
+          project: vm.vm_master?.project_name || 'N/A',
+          cluster: vm.vm_master?.cluster || 'N/A',
+          hasStatusData: false,
+          hasMasterData: false,
+          currentStatus: vm.status,
+          hasCurrentData: true
+        });
+      }
+    });
+    
+    // Filter status data by date first
     let filtered = allStatusData.filter(item => 
       new Date(item.current_time).toDateString() === selectedDate
     );
 
-    // Apply filters
-    if (searchTerm) {
-      filtered = filtered.filter(item => 
-        item.ip.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.vm_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
+    // Apply status change filter to status data only
     if (statusFilter !== 'all') {
       filtered = filtered.filter(item => item.status_change === statusFilter);
     }
 
-    if (projectFilter !== 'all') {
-      filtered = filtered.filter(item => item.project === projectFilter);
-    }
-
     const grouped = {};
     
-    // Get unique VMs
-    const uniqueVMs = [...new Map(filtered.map(item => [item.ip, item])).values()];
-    
-    uniqueVMs.forEach(vm => {
-      const vmKey = `${vm.ip}-${vm.vm_name}`;
+    // Initialize all VMs in the grid
+    allVMsMap.forEach((vmData, vmKey) => {
       grouped[vmKey] = {
-        vm_name: vm.vm_name,
-        ip: vm.ip,
-        project: vm.project,
-        cluster: vm.cluster,
+        vm_name: vmData.vm_name,
+        ip: vmData.ip,
+        project: vmData.project,
+        cluster: vmData.cluster,
+        hasStatusData: vmData.hasStatusData,
+        hasMasterData: vmData.hasMasterData,
+        hasCurrentData: vmData.hasCurrentData,
+        currentStatus: vmData.currentStatus,
         hourlyData: {}
       };
     });
@@ -157,23 +229,87 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
       }
     });
 
-    // Apply severity filter
-    if (severityFilter !== 'all') {
-      const filteredGrouped = {};
-      Object.entries(grouped).forEach(([vmKey, vmData]) => {
-        const severity = getVMSeverity(vmData);
-        if (severity === severityFilter) {
-          filteredGrouped[vmKey] = vmData;
+    // Now apply VM-level filters (these will filter which VMs are shown)
+    let finalGrouped = { ...grouped };
+    
+    // Apply search filter to VM list
+    if (searchTerm) {
+      const searchFilteredGrouped = {};
+      Object.entries(finalGrouped).forEach(([vmKey, vmData]) => {
+        if (vmData.ip.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            vmData.vm_name.toLowerCase().includes(searchTerm.toLowerCase())) {
+          searchFilteredGrouped[vmKey] = vmData;
         }
       });
-      setGridData(filteredGrouped);
-    } else {
-      setGridData(grouped);
+      finalGrouped = searchFilteredGrouped;
     }
+    
+    // Apply project filter to VM list
+    if (projectFilter !== 'all') {
+      const projectFilteredGrouped = {};
+      Object.entries(finalGrouped).forEach(([vmKey, vmData]) => {
+        if (vmData.project === projectFilter) {
+          projectFilteredGrouped[vmKey] = vmData;
+        }
+      });
+      finalGrouped = projectFilteredGrouped;
+    }
+    
+    // Apply online filter to VM list
+    if (onlineFilter !== 'all') {
+      const onlineFilteredGrouped = {};
+      Object.entries(finalGrouped).forEach(([vmKey, vmData]) => {
+        const latestStatus = getLatestVMStatus(vmData.ip, vmData.vm_name);
+        const isOnline = latestStatus === 'reachable';
+        
+        if ((onlineFilter === 'online' && isOnline) || 
+            (onlineFilter === 'offline' && !isOnline)) {
+          onlineFilteredGrouped[vmKey] = vmData;
+        }
+      });
+      finalGrouped = onlineFilteredGrouped;
+    }
+    
+    // Apply severity filter to VM list
+    if (severityFilter !== 'all') {
+      const severityFilteredGrouped = {};
+      Object.entries(finalGrouped).forEach(([vmKey, vmData]) => {
+        const severity = getVMSeverity(vmData);
+        if (severity === severityFilter) {
+          severityFilteredGrouped[vmKey] = vmData;
+        }
+      });
+      finalGrouped = severityFilteredGrouped;
+    }
+    
+    setGridData(finalGrouped);
   };
 
   const calculateStats = () => {
-    // Get latest status for each VM
+    // Get all unique VMs from all data sources
+    const allVMsMap = new Map();
+    
+    // Add from master data
+    vmMasterData.forEach(vm => {
+      const vmKey = `${vm.ip}-${vm.vm_name}`;
+      allVMsMap.set(vmKey, {
+        ip: vm.ip,
+        vm_name: vm.vm_name,
+        status: 'unknown'
+      });
+    });
+    
+    // Update with current monitoring data
+    vms.forEach(vm => {
+      const vmKey = `${vm.ip}-${vm.vm_master?.vm_name || 'Unknown VM'}`;
+      allVMsMap.set(vmKey, {
+        ip: vm.ip,
+        vm_name: vm.vm_master?.vm_name || 'Unknown VM',
+        status: vm.status
+      });
+    });
+    
+    // Update with latest status data
     const latestStatuses = {};
     
     allStatusData.forEach(item => {
@@ -184,12 +320,38 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
         latestStatuses[vmKey] = item;
       }
     });
+    
+    // Update VM statuses with latest status data
+    Object.entries(latestStatuses).forEach(([vmKey, statusData]) => {
+      if (allVMsMap.has(vmKey)) {
+        const vmData = allVMsMap.get(vmKey);
+        allVMsMap.set(vmKey, {
+          ...vmData,
+          status: statusData.current_status
+        });
+      }
+    });
 
-    const total = Object.keys(latestStatuses).length;
-    const reachable = Object.values(latestStatuses).filter(vm => vm.current_status === 'reachable').length;
+    const total = allVMsMap.size;
+    const reachable = Array.from(allVMsMap.values()).filter(vm => vm.status === 'reachable').length;
     const unreachable = total - reachable;
 
     setStats({ total, reachable, unreachable });
+  };
+  
+  const getLatestVMStatus = (ip, vmName) => {
+    // First check current monitoring data
+    const currentVM = vms.find(vm => vm.ip === ip);
+    if (currentVM) {
+      return currentVM.status;
+    }
+    
+    // Then check status history
+    const vmStatuses = allStatusData.filter(item => 
+      item.ip === ip && item.vm_name === vmName
+    ).sort((a, b) => new Date(b.current_time) - new Date(a.current_time));
+    
+    return vmStatuses.length > 0 ? vmStatuses[0].current_status : 'unknown';
   };
 
   const getStatusIcon = (hourData) => {
@@ -219,6 +381,33 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
       default:
         return <Info {...iconProps} style={{ color: '#ffd700' }} title="New" />;
     }
+  };
+  
+  const getVMStatusIcon = (vmData) => {
+    // Show current status for VMs
+    if (!vmData.hasStatusData || !vmData.hasCurrentData) {
+      const latestStatus = getLatestVMStatus(vmData.ip, vmData.vm_name);
+      const iconProps = {
+        className: styles.statusIcon,
+        onClick: () => setSelectedModal({
+          ip: vmData.ip,
+          vm_name: vmData.vm_name,
+          current_status: latestStatus,
+          current_time: new Date().toISOString(),
+          project: vmData.project,
+          cluster: vmData.cluster,
+          status_change: 'current'
+        })
+      };
+      
+      return latestStatus === 'reachable'
+        ? <CheckCircle {...iconProps} style={{ color: '#10b981' }} title="Currently Reachable" />
+        : latestStatus === 'not reachable'
+        ? <XCircle {...iconProps} style={{ color: '#ef4444' }} title="Currently Unreachable" />
+        : <div className={styles.emptyCell} title="Status Unknown"></div>;
+    }
+    
+    return <div className={styles.emptyCell}></div>;
   };
 
   const getVMSeverity = (vmData) => {
@@ -279,6 +468,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('all');
+    setOnlineFilter('all');
     setSeverityFilter('all');
     setProjectFilter('all');
   };
@@ -382,6 +572,19 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
                 <option value="came back">Came Back</option>
                 <option value="went down">Went Down</option>
                 <option value="still down">Still Down</option>
+              </select>
+            </div>
+
+            <div className={styles.filterContainer}>
+              <CheckCircle className={styles.filterIcon} />
+              <select
+                value={onlineFilter}
+                onChange={(e) => setOnlineFilter(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="all">All VMs</option>
+                <option value="online">Online Only</option>
+                <option value="offline">Offline Only</option>
               </select>
             </div>
 
@@ -516,7 +719,10 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
                   
                   {hours.map(hour => (
                     <div key={hour} className={styles.statusCell}>
-                      {getStatusIcon(vmData.hourlyData[hour])}
+                      {vmData.hourlyData[hour] && vmData.hourlyData[hour].length > 0 
+                        ? getStatusIcon(vmData.hourlyData[hour])
+                        : getVMStatusIcon(vmData)
+                      }
                     </div>
                   ))}
                 </div>
