@@ -21,7 +21,7 @@ function InformationExtractor() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch("http://localhost:8000/extract-info/", {
+      const res = await fetch("http://localhost:9200/extract-info/", {
         method: "POST",
         body: formData,
       });

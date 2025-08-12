@@ -1,0 +1,1 @@
+from Information import TenderAnalyzer   #noqa 404
