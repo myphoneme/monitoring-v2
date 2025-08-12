@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 # from datetime import date
 # import pandas as pd
-from backend_Quotation import core_logic
+from app import core_logic
 # import tempfile
 import os
 from fastapi.responses import FileResponse
