@@ -147,9 +147,10 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
                   <span>Group / VM</span>
                 </div>
               </th>
-              {allDays.map(day => (
+              {/* <th className={styles.dayHeader}>Status</th> */}
+              {/* {allDays.map(day => (
                 <th key={day} className={styles.dayHeader}>{day}</th>
-              ))}
+              ))} */}
             </tr>
           </thead>
           <tbody>
@@ -196,7 +197,16 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
                       </span>
                     </td>
                   </tr>
-                  {!isCollapsed && vms.map((vm, index) => (
+                  {!isCollapsed && (
+                    <>
+                    <tr className={styles.dayHeaderRow}>
+                      <td> </td>
+                      {allDays.map(day => (
+                      <th key={day} className={styles.dayHeader}>{day}</th>
+                    ))}
+                    <td></td>
+                    </tr>
+                    {vms.map((vm, index) => (
                     <tr key={`${vm.uniqueName}-${index}`} className={styles.vmRow}>
                       <td className={styles.vmCell}>
                         <div className={styles.vmInfo}>
@@ -218,9 +228,12 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
                           </div>
                         </td>
                       ))}
-                      <td className={styles.expandCell}></td>
+                      <td></td>
+                      {/* <td className={styles.expandCell}></td> */}
                     </tr>
                   ))}
+                  </>
+                  )}
                 </React.Fragment>
               )
             })}
