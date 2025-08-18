@@ -275,7 +275,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  /* width: 32px; */
   height: 32px;
   border: none;
   border-radius: 6px;
@@ -518,7 +518,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  /* width: 44px; */
   height: 44px;
   border: none;
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);

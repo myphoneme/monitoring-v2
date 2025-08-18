@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import styles from './TabularView.module.css'
-import fullBackupIcon from '../../assets/icons/full-backup.svg'
-import incrementalBackupIcon from '../../assets/icons/incremental-backup.svg'
-import metadataIcon from '../../assets/icons/metadata.svg'
+import fullBackupIcon from '../../assets/icons/full-backup.png'
+import incrementalBackupIcon from '../../assets/icons/incremental-backup.png'
+import metadataIcon from '../../assets/icons/metadata.png'
 import noBackupIcon from '../../assets/icons/no-backup.svg'
-import noDataIcon from '../../assets/icons/no-data.svg'
+import noDataIcon from '../../assets/icons/no-data.png'
 
 function TabularView({ data, selectedMonth, formatMonth, stats }) {
   const [collapsedGroups, setCollapsedGroups] = useState(new Set(Object.keys(data)))
