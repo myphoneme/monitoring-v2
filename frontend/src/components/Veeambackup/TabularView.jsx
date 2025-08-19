@@ -88,7 +88,7 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
   }
 
   const getCombinedIcon = (dayData) => {
-    if (!dayData) return <img src={noDataIcon} alt="No data" className={styles.dayIcon} />
+    if (!dayData) return 
     
     let icons = []
     if (dayData.full_backup) icons.push(<img key="full" src={fullBackupIcon} alt="Full backup" className={styles.dayIcon} />)
@@ -131,10 +131,10 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
             <img src={noBackupIcon} alt="No backup" />
             No Backup
           </span>
-          <span className={styles.legendItem}>
+          {/* <span className={styles.legendItem}>
             <img src={noDataIcon} alt="No data" />
             No Data
-          </span>
+          </span> */}
         </div>
       </div>
 
