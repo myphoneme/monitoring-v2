@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './ImageGenerator.module.css';
 import default_image from '../../assets/default_image.svg';
+import { ArrowLeft } from 'lucide-react'
 
 const ImageGenerator = () => {
   const [prompt, setPrompt] = useState('');
@@ -54,23 +55,9 @@ const ImageGenerator = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', position: 'relative', minHeight: '100vh' }}>
       {/* 🔙 Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          position: 'absolute',
-          top: '1.5rem',
-          left: '1.5rem',
-          background: 'none',
-          border: 'none',
-          fontSize: '2rem',
-          cursor: 'pointer',
-          color: '#333',
-          padding: '3rem',
-        }}
-        aria-label="Go Back"
-      >
-        ←
-      </button>
+       <button className={styles.backButton} onClick={() => navigate(-1)} title="Go Back">
+            <ArrowLeft size={16} />
+          </button>
 
       <div style={{ padding: '6rem', maxWidth: '1000px', margin: 'auto' }}>
         <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>

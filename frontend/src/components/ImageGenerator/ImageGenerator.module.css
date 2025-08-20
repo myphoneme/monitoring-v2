@@ -50,3 +50,28 @@
   text-align: center;
   margin-top: 0.5rem;
 }
+.backButton {
+  position: fixed;
+  top: 6rem;
+  left: 1.5rem;
+  background: transparent;
+  border: 2px solid #ff6b35;
+  color: #ff6b35;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  /* remove margin here */
+}
+.backButton:hover {
+  background: #ff6b35;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(255, 107, 53, 0.3);
+}
+
