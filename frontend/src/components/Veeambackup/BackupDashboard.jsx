@@ -27,7 +27,7 @@ function BackupDashboard({ onDataUpdate }) {
   const fetchBackupData = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://fastapi.phoneme.in/veeam')
+      const response = await fetch('https://fastapi.phoneme.in/vm/veeam_backups')
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -87,7 +87,7 @@ function BackupDashboard({ onDataUpdate }) {
 
       if (!vmGroup.dates[day]) {
         vmGroup.dates[day] = {
-          metadata: false,
+          meta: false,
           full_backup: false,
           incremental_backup: false,
           files: [],
@@ -96,13 +96,13 @@ function BackupDashboard({ onDataUpdate }) {
       }
 
       const dayData = vmGroup.dates[day]
-      if (backup.metadata) dayData.metadata = true
+      if (backup.meta) dayData.meta = true
       if (backup.full_backup) dayData.full_backup = true
       if (backup.incremental_backup) dayData.incremental_backup = true
 
       dayData.files.push({
         filename: backup.vm,
-        metadata: backup.metadata,
+        metadata: backup.meta,
         full_backup: backup.full_backup,
         incremental_backup: backup.incremental_backup,
         last_modified: backup.last_modified

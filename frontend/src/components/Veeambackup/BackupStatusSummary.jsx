@@ -83,7 +83,7 @@ function BackupStatusSummary({ data, selectedMonth, formatMonth }) {
           totalBackups: vmDates.length,
           hasFullBackup: Object.values(vm.dates).some(d => d.full_backup),
           hasIncrementalBackup: Object.values(vm.dates).some(d => d.incremental_backup),
-          hasMetadata: Object.values(vm.dates).some(d => d.metadata)
+          hasMetadata: Object.values(vm.dates).some(d => d.meta)
         }
 
         if (hasRecentBackup) {

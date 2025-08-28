@@ -65,7 +65,7 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
             lastBackupType = 'full'
           }
         }
-        if (dayData.metadata) {
+        if (dayData.meta) {
           hasMetadata = true
           if (!lastBackupDate || backupDate > lastBackupDate) {
             lastBackupDate = backupDate
@@ -93,7 +93,7 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
     let icons = []
     if (dayData.full_backup) icons.push(<img key="full" src={fullBackupIcon} alt="Full backup" className={styles.dayIcon} />)
     if (dayData.incremental_backup) icons.push(<img key="incremental" src={incrementalBackupIcon} alt="Incremental backup" className={styles.dayIcon} />)
-    if (dayData.metadata) icons.push(<img key="metadata" src={metadataIcon} alt="Metadata" className={styles.dayIcon} />)
+    if (dayData.meta) icons.push(<img key="metadata" src={metadataIcon} alt="Metadata" className={styles.dayIcon} />)
     
     if (icons.length === 0) return <img src={noBackupIcon} alt="No backup" className={styles.dayIcon} />
     return <div className={styles.iconGroup}>{icons}</div>
@@ -220,7 +220,7 @@ function TabularView({ data, selectedMonth, formatMonth, stats }) {
                             className={styles.dayIconContainer}
                             title={
                               vm.dates[day] ? 
-                              `Full: ${vm.dates[day].full_backup ? 'Yes' : 'No'}, Incremental: ${vm.dates[day].incremental_backup ? 'Yes' : 'No'}, Metadata: ${vm.dates[day].metadata ? 'Yes' : 'No'}` : 
+                              `Full: ${vm.dates[day].full_backup ? 'Yes' : 'No'}, Incremental: ${vm.dates[day].incremental_backup ? 'Yes' : 'No'}, Metadata: ${vm.dates[day].meta ? 'Yes' : 'No'}` : 
                               'No backup data'
                             }
                           >

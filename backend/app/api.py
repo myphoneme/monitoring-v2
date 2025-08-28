@@ -1,53 +1,17 @@
 from fastapi import FastAPI, File, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
-# from datetime import date
-# import pandas as pd
-from app import core_logic
-# import tempfile
-import os
 from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+from typing import Optional, List
+import os
 import shutil
+
+from app import core_logic
 from Information import TenderAnalyzer
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Add CORS middleware
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # For production, specify your frontend URL
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-######################  TISHA   API #######################################
-
-@app.post("/extract-info/")
-async def extract_info(file: UploadFile = File(...)):
-    # Save uploaded file
-    pdf_path = f"temp_{file.filename}"
-    with open(pdf_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    # Process PDF
-    analyzer = TenderAnalyzer(pdf_path)
-    analyzer.process_document()
-    excel_file = f"{pdf_path}_structured.xlsx"
-    analyzer.generate_excel_report(excel_file)
-    # Return Excel file
-    response = FileResponse(excel_file, filename=os.path.basename(excel_file))
-    # Optionally, cleanup files after sending (for production, use background tasks)
-    return response
-
-######################  TISHA   API END #######################################
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# app = FastAPI()
-
-# Allow CORS for local React dev
+# CORS (dev-friendly; tighten for prod)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -56,162 +20,419 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Pydantic Models ---
+######################  TISHA   API #######################################
+@app.post("/extract-info/")
+async def extract_info(file: UploadFile = File(...)):
+    pdf_path = f"temp_{file.filename}"
+    with open(pdf_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    analyzer = TenderAnalyzer(pdf_path)
+    analyzer.process_document()
+    excel_file = f"{pdf_path}_structured.xlsx"
+    analyzer.generate_excel_report(excel_file)
+
+    return FileResponse(excel_file, filename=os.path.basename(excel_file))
+######################  TISHA   API END ###################################
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+# ---------- Models ----------
 class CustomerInfo(BaseModel):
     name: str
     address: str
     gstn: Optional[str] = None
     email: Optional[str] = None
 
+
 class QuotationInfo(BaseModel):
     number: str
-    date: str  # Accept as string for easier frontend integration
+    date: str  # keep as string (YYYY-MM-DD)
+
+
+class VMConfiguration(BaseModel):
+    # Per-VM config (matches your React payload)
+    name: Optional[str] = "VM"
+    vcpus: int = Field(..., ge=0)
+    ram: int = Field(..., ge=0)
+    storage: int = Field(..., ge=0)
+    quantity: int = Field(..., ge=0)
+
+    antivirus_qty: int = 0
+    backup_qty: int = 0
+    db_qty: int = 0
+    os_type: str = "linux"     # "linux" | "windows"
+    os_qty: int = 0
+    bw_choice: str = "Default" # "Default" | "Dedicated 10 MBPS"
+    discount_percent: float = 0.0
+
 
 class QuotationRequest(BaseModel):
     customer_info: CustomerInfo
     quotation_info: QuotationInfo
-    user_vcpus: int
-    user_ram: int
-    user_storage: int
-    num_vms: int
-    antivirus_qty: int
-    backup_qty: int
-    db_qty: int
-    os_type: str
-    os_qty: int
-    bw_choice: str
-    discount_percent: float = 0
 
-class CalculationResponse(BaseModel):
-    base_vm: dict
-    extra_vcpu: int
-    extra_ram: int
-    extra_storage: int
-    vcpu_cost: int
-    ram_cost: int
-    storage_cost: int
-    per_vm_cost: int
-    total_vm_monthly: int
-    total_vm_annual: int
-    antivirus_cost: int
-    os_cost: int
-    backup_cost: int
-    db_cost: int
-    mgmt_monthly: int
-    mgmt_annual: int
-    bandwidth_cost: int
-    discount_amt: float
-    final_total: float
-    summary: list
-    vm_table: list
-    mgmt_table: list
+    # Legacy single-VM fields (optional for backward compatibility)
+    user_vcpus: Optional[int] = 1
+    user_ram: Optional[int] = 1
+    user_storage: Optional[int] = 1
+    num_vms: Optional[int] = 1
 
-# --- Helper to convert DataFrame to list of dicts for JSON ---
+    # Legacy single-VM service knobs (optional)
+    antivirus_qty: Optional[int] = 0
+    backup_qty: Optional[int] = 0
+    db_qty: Optional[int] = 0
+    os_type: Optional[str] = "linux"
+    os_qty: Optional[int] = 0
+
+    # A global bandwidth/discount (optional, used if per-VM not present)
+    bw_choice: Optional[str] = None
+    discount_percent: Optional[float] = 0.0
+
+    # New multi-VM array (preferred)
+    vm_configurations: Optional[List[VMConfiguration]] = []
+
+
+# ---------- Helpers ----------
 def df_to_dict(df):
     return df.fillna(0).astype(str).to_dict(orient="records")
 
-# --- Calculate Endpoint ---
-@app.post("/calculate", response_model=CalculationResponse)
-def calculate_quotation(data: QuotationRequest):
-    # VM costs
-    vm = core_logic.calculate_vm_costs(data.user_vcpus, data.user_ram, data.user_storage, data.num_vms)
-    # Management costs
-    mgmt = core_logic.calculate_management_costs(
-        data.antivirus_qty, data.backup_qty, data.db_qty, data.os_type, data.os_qty
-    )
-    # Bandwidth
-    bandwidth_cost = core_logic.get_bandwidth_cost(data.bw_choice)
-    # Final total
-    final_total, discount_amt = core_logic.calculate_final_total(
-        vm["total_vm_annual"], mgmt["mgmt_annual"], bandwidth_cost, data.discount_percent
-    )
-    # Tables
-    df_vm = core_logic.build_vm_dataframe(
-        vm["base_vm"], vm["extra_vcpu"], vm["extra_ram"], vm["extra_storage"],
-        vm["vcpu_cost"], vm["ram_cost"], vm["storage_cost"], data.num_vms
-    )
-    df_mgmt = core_logic.build_mgmt_dataframe(
-        data.antivirus_qty, mgmt["antivirus_cost"], data.os_type, data.os_qty, mgmt["os_cost"],
-        data.backup_qty, mgmt["backup_cost"], data.db_qty, mgmt["db_cost"]
-    )
+
+def _label_items_with_vm_name(df, vm_name: str):
+    """Prefix the Item/Specification with the VM name to make tables readable."""
+    if df is None or df.empty:
+        return df
+    df = df.copy()
+    if "Item/Specification" in df.columns:
+        df["Item/Specification"] = df["Item/Specification"].apply(
+            lambda s: f"{vm_name}: {s}"
+        )
+    return df
+
+
+def _aggregate_multi_vm(req: QuotationRequest):
+    """
+    Run core_logic per VM configuration & aggregate totals and tables.
+    We do not change core_logic; we just sum results here.
+    """
+    total_vm_annual_sum = 0
+    total_mgmt_annual_sum = 0
+    vm_table_frames = []
+    mgmt_table_frames = []
+
+    # Decide bandwidth:
+    # 1) If global bw_choice is given, use that once.
+    # 2) Else, if any VM has non-default choice, use the max priced choice once.
+    if req.bw_choice:
+        bandwidth_cost = core_logic.get_bandwidth_cost(req.bw_choice)
+        bandwidth_desc = req.bw_choice
+    else:
+        # collect non-default choices across VMs
+        choices = [vm.bw_choice for vm in req.vm_configurations or [] if vm.bw_choice and vm.bw_choice != "Default"]
+        if choices:
+            # choose the highest priced one (once)
+            unique = list(set(choices))
+            priced = [(ch, core_logic.get_bandwidth_cost(ch)) for ch in unique]
+            priced.sort(key=lambda x: x[1], reverse=True)
+            bandwidth_desc, bandwidth_cost = priced[0][0], priced[0][1]
+        else:
+            bandwidth_desc, bandwidth_cost = "Default", 0
+
+    # Discount:
+    # - We accumulate per-VM discount on (infra + mgmt) and subtract at the end.
+    total_discount_amt = 0.0
+
+    # Run each VM
+    for vm in (req.vm_configurations or []):
+        vm_cost = core_logic.calculate_vm_costs(
+            user_vcpus=vm.vcpus,
+            user_ram=vm.ram,
+            user_storage=vm.storage,
+            num_vms=vm.quantity,
+        )
+
+        mgmt_cost = core_logic.calculate_management_costs(
+            antivirus_qty=vm.antivirus_qty,
+            backup_qty=vm.backup_qty,
+            db_qty=vm.db_qty,
+            os_type=vm.os_type,
+            os_qty=vm.os_qty,
+        )
+
+        # Aggregate totals
+        total_vm_annual_sum += vm_cost["total_vm_annual"]
+        total_mgmt_annual_sum += mgmt_cost["mgmt_annual"]
+
+        # Per-VM discount against infra + mgmt
+        per_vm_subtotal = vm_cost["total_vm_annual"] + mgmt_cost["mgmt_annual"]
+        per_vm_discount = per_vm_subtotal * (float(vm.discount_percent or 0) / 100.0)
+        total_discount_amt += per_vm_discount
+
+        # Build/label tables per VM and append
+        df_vm = core_logic.build_vm_dataframe(
+            vm_cost["base_vm"],
+            vm_cost["extra_vcpu"],
+            vm_cost["extra_ram"],
+            vm_cost["extra_storage"],
+            vm_cost["vcpu_cost"],
+            vm_cost["ram_cost"],
+            vm_cost["storage_cost"],
+            vm.quantity,
+        )
+        df_vm = _label_items_with_vm_name(df_vm, vm.name or "VM")
+        vm_table_frames.append(df_vm)
+
+        df_mgmt = core_logic.build_mgmt_dataframe(
+            vm.antivirus_qty,
+            mgmt_cost["antivirus_cost"],
+            vm.os_type,
+            vm.os_qty,
+            mgmt_cost["os_cost"],
+            vm.backup_qty,
+            mgmt_cost["backup_cost"],
+            vm.db_qty,
+            mgmt_cost["db_cost"],
+        )
+        df_mgmt = _label_items_with_vm_name(df_mgmt, vm.name or "VM")
+        mgmt_table_frames.append(df_mgmt)
+
+    # Fall back to legacy single-VM if vm_configurations is empty
+    if not (req.vm_configurations and len(req.vm_configurations) > 0):
+        vm_cost = core_logic.calculate_vm_costs(
+            user_vcpus=int(req.user_vcpus or 1),
+            user_ram=int(req.user_ram or 1),
+            user_storage=int(req.user_storage or 1),
+            num_vms=int(req.num_vms or 1),
+        )
+        mgmt_cost = core_logic.calculate_management_costs(
+            antivirus_qty=int(req.antivirus_qty or 0),
+            backup_qty=int(req.backup_qty or 0),
+            db_qty=int(req.db_qty or 0),
+            os_type=(req.os_type or "linux"),
+            os_qty=int(req.os_qty or 0),
+        )
+
+        total_vm_annual_sum += vm_cost["total_vm_annual"]
+        total_mgmt_annual_sum += mgmt_cost["mgmt_annual"]
+
+        # Use the global discount (legacy)
+        total_discount_amt += (vm_cost["total_vm_annual"] + mgmt_cost["mgmt_annual"]) * (
+            float(req.discount_percent or 0) / 100.0
+        )
+
+        df_vm = core_logic.build_vm_dataframe(
+            vm_cost["base_vm"],
+            vm_cost["extra_vcpu"],
+            vm_cost["extra_ram"],
+            vm_cost["extra_storage"],
+            vm_cost["vcpu_cost"],
+            vm_cost["ram_cost"],
+            vm_cost["storage_cost"],
+            int(req.num_vms or 1),
+        )
+        vm_table_frames.append(df_vm)
+
+        df_mgmt = core_logic.build_mgmt_dataframe(
+            int(req.antivirus_qty or 0),
+            mgmt_cost["antivirus_cost"],
+            (req.os_type or "linux"),
+            int(req.os_qty or 0),
+            mgmt_cost["os_cost"],
+            int(req.backup_qty or 0),
+            mgmt_cost["backup_cost"],
+            int(req.db_qty or 0),
+            mgmt_cost["db_cost"],
+        )
+        mgmt_table_frames.append(df_mgmt)
+
+        # If bandwidth not decided earlier, use legacy global
+        if req.bw_choice is not None:
+            bandwidth_desc = req.bw_choice
+            bandwidth_cost = core_logic.get_bandwidth_cost(req.bw_choice)
+
+    # Concatenate tables
+    import pandas as pd
+    df_vm_all = pd.concat(vm_table_frames, ignore_index=False) if vm_table_frames else pd.DataFrame()
+    df_mgmt_all = pd.concat(mgmt_table_frames, ignore_index=False) if mgmt_table_frames else pd.DataFrame()
+
+    # Summary / final total
+    total_without_discount = total_vm_annual_sum + total_mgmt_annual_sum
+    final_total = total_without_discount + bandwidth_cost - total_discount_amt
+
     df_summary = core_logic.build_summary_dataframe(
-        vm["total_vm_annual"], mgmt["mgmt_annual"], data.bw_choice, bandwidth_cost,
-        data.discount_percent, discount_amt, final_total
-    )
-    return CalculationResponse(
-        base_vm=vm["base_vm"],
-        extra_vcpu=vm["extra_vcpu"],
-        extra_ram=vm["extra_ram"],
-        extra_storage=vm["extra_storage"],
-        vcpu_cost=vm["vcpu_cost"],
-        ram_cost=vm["ram_cost"],
-        storage_cost=vm["storage_cost"],
-        per_vm_cost=vm["per_vm_cost"],
-        total_vm_monthly=vm["total_vm_monthly"],
-        total_vm_annual=vm["total_vm_annual"],
-        antivirus_cost=mgmt["antivirus_cost"],
-        os_cost=mgmt["os_cost"],
-        backup_cost=mgmt["backup_cost"],
-        db_cost=mgmt["db_cost"],
-        mgmt_monthly=mgmt["mgmt_monthly"],
-        mgmt_annual=mgmt["mgmt_annual"],
+        total_vm_annual=total_vm_annual_sum,
+        mgmt_annual=total_mgmt_annual_sum,
+        bw_choice=bandwidth_desc,
         bandwidth_cost=bandwidth_cost,
-        discount_amt=discount_amt,
-        final_total=final_total,
-        summary=df_to_dict(df_summary),
-        vm_table=df_to_dict(df_vm),
-        mgmt_table=df_to_dict(df_mgmt),
+        discount_percent=(0.0),  # the summary table prints only one discount line; we add an explicit row below
+        discount_amt=0.0,
+        final_total=final_total
     )
 
-# --- PDF Generation Endpoint ---
+    # Add a single combined “Discount” line (sum of all per-VM discounts)
+    if total_discount_amt > 0:
+        extra = pd.DataFrame(
+            [{"Description": "Discount (combined)", "Amount (INR)": f"-INR {total_discount_amt:,.0f}"}]
+        )
+        df_summary = pd.concat([df_summary.iloc[[0]],  # Total Recurring
+                                df_summary.iloc[[1]],  # Bandwidth
+                                extra,
+                                df_summary.iloc[[2]]], # Final Quotation
+                               ignore_index=True)
+
+    return df_vm_all, df_mgmt_all, df_summary, {
+        "total_vm_annual": total_vm_annual_sum,
+        "mgmt_annual": total_mgmt_annual_sum,
+        "bandwidth_cost": bandwidth_cost,
+        "discount_amt": total_discount_amt,
+        "final_total": final_total,
+    }
+
+
+# ---------- Endpoints ----------
+@app.post("/calculate")
+def calculate_quotation(data: QuotationRequest):
+    df_vm, df_mgmt, df_summary, totals = _aggregate_multi_vm(data)
+
+    # Convert tables to JSON-friendly lists:
+    vm_table = df_to_dict(df_vm) if not df_vm.empty else []
+    mgmt_table = df_to_dict(df_mgmt) if not df_mgmt.empty else []
+    summary = df_to_dict(df_summary) if not df_summary.empty else []
+
+    # Minimal legacy block so older UI won’t crash
+    legacy = {
+        "base_vm": {},
+        "extra_vcpu": 0,
+        "extra_ram": 0,
+        "extra_storage": 0,
+        "vcpu_cost": 0,
+        "ram_cost": 0,
+        "storage_cost": 0,
+        "per_vm_cost": 0,
+        "total_vm_monthly": 0,
+        "total_vm_annual": totals["total_vm_annual"],
+        "antivirus_cost": 0,
+        "os_cost": 0,
+        "backup_cost": 0,
+        "db_cost": 0,
+        "mgmt_monthly": 0,
+        "mgmt_annual": totals["mgmt_annual"],
+        "bandwidth_cost": totals["bandwidth_cost"],
+        "discount_amt": totals["discount_amt"],
+        "final_total": totals["final_total"],
+    }
+
+    return {
+        **legacy,
+        "summary": summary,
+        "vm_table": vm_table,
+        "mgmt_table": mgmt_table,
+    }
+
+
 @app.post("/generate-pdf")
 def generate_pdf(data: QuotationRequest):
-    # VM costs
-    vm = core_logic.calculate_vm_costs(data.user_vcpus, data.user_ram, data.user_storage, data.num_vms)
-    mgmt = core_logic.calculate_management_costs(
-        data.antivirus_qty, data.backup_qty, data.db_qty, data.os_type, data.os_qty
-    )
-    bandwidth_cost = core_logic.get_bandwidth_cost(data.bw_choice)
-    final_total, discount_amt = core_logic.calculate_final_total(
-        vm["total_vm_annual"], mgmt["mgmt_annual"], bandwidth_cost, data.discount_percent
-    )
-    df_vm = core_logic.build_vm_dataframe(
-        vm["base_vm"], vm["extra_vcpu"], vm["extra_ram"], vm["extra_storage"],
-        vm["vcpu_cost"], vm["ram_cost"], vm["storage_cost"], data.num_vms
-    )
-    df_mgmt = core_logic.build_mgmt_dataframe(
-        data.antivirus_qty, mgmt["antivirus_cost"], data.os_type, data.os_qty, mgmt["os_cost"],
-        data.backup_qty, mgmt["backup_cost"], data.db_qty, mgmt["db_cost"]
-    )
-    df_summary = core_logic.build_summary_dataframe(
-        vm["total_vm_annual"], mgmt["mgmt_annual"], data.bw_choice, bandwidth_cost,
-        data.discount_percent, discount_amt, final_total
-    )
-    # Main table for PDF
-    main_items_services = f"App server {data.user_vcpus}vCPU {data.user_ram}GB RAM {data.user_storage}GB Storage, Antivirus, OS Managemnt({data.os_type.title()}), Backup Management"
-    main_qty = data.num_vms
-    main_unit_price = vm["per_vm_cost"]
-    main_taxable_value = final_total
-    main_tax = round(main_taxable_value * 0.18, 2)
-    main_grand_total = main_taxable_value + main_tax
-    main_amount_words = core_logic.get_amount_in_words(main_grand_total)
-    # Logo path (absolute)
+    import pandas as pd
+
+    # Aggregate numbers/tables once
+    df_vm, df_mgmt, df_summary, totals = _aggregate_multi_vm(data)
+
+    # ---- Build multi-row main table ----
+    rows = []
+    taxable_sum = 0.0
+    tax_sum = 0.0
+
+    # For each VM config, compute (infra + mgmt - per-VM discount) as a row
+    if data.vm_configurations and len(data.vm_configurations) > 0:
+        for vm in data.vm_configurations:
+            vm_cost = core_logic.calculate_vm_costs(vm.vcpus, vm.ram, vm.storage, vm.quantity)
+            mgmt_cost = core_logic.calculate_management_costs(
+                vm.antivirus_qty, vm.backup_qty, vm.db_qty, vm.os_type, vm.os_qty
+            )
+            per_vm_subtotal = vm_cost["total_vm_annual"] + mgmt_cost["mgmt_annual"]
+            per_vm_discount = per_vm_subtotal * (float(vm.discount_percent or 0) / 100.0)
+            taxable = float(per_vm_subtotal - per_vm_discount)
+            tax = round(taxable * 0.18, 2)
+
+            desc = (
+                f"{vm.name or 'VM'} {vm.vcpus}vCPU {vm.ram}GB RAM {vm.storage}GB Storage, "
+                f"Mgmt & Security Services"
+                + (f", Discount {vm.discount_percent:.2f}%" if vm.discount_percent else "")
+            )
+
+            rows.append({
+                "items_services": desc,
+                "qty": vm.quantity,
+                # You can show 0.00 here if you don't want to expose per-VM unit
+                "unit_price": taxable / vm.quantity ,
+                "taxable_value": taxable,
+                "tax": tax,
+            })
+            taxable_sum += taxable
+            tax_sum += tax
+
+    # Add one Bandwidth row if there is any bandwidth charge
+    if totals["bandwidth_cost"] > 0:
+        bw_desc = df_summary.iloc[1]["Description"] if not df_summary.empty and len(df_summary) > 1 else "Bandwidth"
+        taxable = float(totals["bandwidth_cost"])
+        tax = round(taxable * 0.18, 2)
+
+        rows.append({
+            "items_services": f"{bw_desc}",
+            "qty": 1,
+            "unit_price": 0.0,
+            "taxable_value": taxable,
+            "tax": tax,
+        })
+        taxable_sum += taxable
+        tax_sum += tax
+
+    # Fallback to legacy single line if no rows were built
+    if not rows:
+        # Legacy single VM printable line (kept as backup)
+        main_items_services = "Virtual Machines, Management & Security Services"
+        main_qty = int(data.num_vms or 1)
+        taxable_sum = float(totals["final_total"])
+        tax_sum = round(taxable_sum * 0.18, 2)
+        rows = [{
+            "items_services": main_items_services,
+            "qty": main_qty,
+            "unit_price": 0.0,
+            "taxable_value": taxable_sum,
+            "tax": tax_sum,
+        }]
+
+    grand_total = taxable_sum + tax_sum
+    amount_words = core_logic.get_amount_in_words(grand_total)
+
+    # ---- Render PDF manually using core_logic.PDF so we can pass multiple rows ----
+    from app.core_logic import PDF as CLPDF
+
     logo_path = os.path.join(BASE_DIR, "phoneme_logo.png")
-    pdf_bytes = core_logic.generate_quotation_pdf(
-        logo_path,
-        data.customer_info.dict(),
-        data.quotation_info.dict(),
-        main_items_services,
-        main_qty,
-        main_unit_price,
-        main_taxable_value,
-        main_tax,
-        main_grand_total,
-        main_amount_words,
-        df_vm,
-        df_mgmt,
-        df_summary
+    pdf = CLPDF()
+    pdf.add_page()
+    pdf.quotation_header(logo_path, data.customer_info.dict(), data.quotation_info.dict())
+    pdf.main_quotation_table(rows, grand_total, tax_sum, amount_words)
+    pdf.add_terms_and_conditions()
+
+    # Page 2: detailed tables
+    pdf.add_page()
+    if not df_vm.empty:
+        pdf.table("Infrastructure Cost", df_vm)
+    if not df_mgmt.empty:
+        pdf.table("Management Services", df_mgmt)
+    if not df_summary.empty:
+        pdf.simple_table(df_summary)
+
+    import tempfile
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        pdf.output(tmp.name)
+        with open(tmp.name, "rb") as f:
+            pdf_bytes = f.read()
+    os.remove(tmp.name)
+
+    return Response(
+        pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=vm_quotation.pdf"},
     )
-    return Response(pdf_bytes, media_type="application/pdf", headers={
-        "Content-Disposition": "attachment; filename=vm_quotation.pdf"
-    }) 
