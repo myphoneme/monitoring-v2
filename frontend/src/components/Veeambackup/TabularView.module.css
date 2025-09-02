@@ -340,3 +340,134 @@
     font-size: 0.7rem;
   }
 }
+
+
+:global(.dark) .tabularView {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Month Header */
+:global(.dark) .monthHeader {
+  background: #2a2a2a;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+:global(.dark) .monthTitle {
+  color: #ffd700;
+}
+
+:global(.dark) .quickStats .statItem {
+  background: rgba(255,107,53,0.2);
+  border: 1px solid rgba(255,107,53,0.3);
+  color: #ffb088;
+}
+
+/* Legend */
+:global(.dark) .legend {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+:global(.dark) .legendTitle {
+  color: #f7f7f8;
+}
+
+:global(.dark) .legendItem {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #ddd;
+}
+
+/* Table */
+:global(.dark) .tableContainer {
+  background: #1a1a1a;
+}
+
+:global(.dark) .backupTable thead {
+  background: #2a2a2a;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+:global(.dark) .backupTable th {
+  color: #f7f7f8;
+  border-bottom: 1px solid #444;
+  border-right: 1px solid #333;
+}
+
+/* Group Row */
+:global(.dark) .groupRow {
+  background: #1a1a1a;
+  color: #eee;
+  border-left: 3px solid #ff6b35;
+}
+
+:global(.dark) .groupRow:hover {
+  background: rgba(255,107,53,0.1);
+}
+
+:global(.dark) .groupCell {
+  background: #2a2a2a;
+}
+
+:global(.dark) .groupName {
+  color: #ffd700;
+}
+
+/* VM Row */
+:global(.dark) .vmRow {
+  background: #1a1a1a;
+  border-left: 3px solid transparent;
+}
+
+:global(.dark) .vmRow:nth-child(even) {
+  background: #222;
+}
+
+:global(.dark) .vmRow:hover {
+  background: rgba(255,107,53,0.08);
+  border-left: 3px solid #ff6b35;
+}
+
+:global(.dark) .vmRow td {
+  border-bottom: 1px solid #333;
+  border-right: 1px solid #2a2a2a;
+}
+
+:global(.dark) .vmName {
+  color: #ff8f65;
+}
+
+/* Stats Inline Row */
+:global(.dark) .mergedStats {
+  background: #222;
+}
+
+:global(.dark) .mergedStats .statItem {
+  background: rgba(255,107,53,0.15);
+  border: 1px solid rgba(255,107,53,0.3);
+  color: #ffb088;
+}
+
+/* Day Headers + Cells */
+:global(.dark) .dayHeader {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+:global(.dark) .dayIconContainer:hover {
+  background: rgba(255,107,53,0.1);
+}
+
+/* Scrollbar */
+:global(.dark) .tableContainer::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+:global(.dark) .tableContainer::-webkit-scrollbar-thumb {
+  background: #555;
+}
+:global(.dark) .tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

@@ -52,3 +52,54 @@
     width: 100%;
   }
 }
+
+/* 🌙 Dark mode styles */
+:global(.dark) .label {
+  color: #f1f5f9;
+  text-shadow: none;
+}
+
+:global(.dark) .select {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #475569;
+  color: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .select:hover {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  border-color: #64748b;
+}
+
+:global(.dark) .select:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+}
+
+/* 🌙 Dark mode dropdown options */
+:global(.dark) .select option {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+:global(.dark) .select option:checked {
+  background-color: #334155;
+  color: #ffffff;
+}
+
+:global(.dark) .select option:hover {
+  background-color: #475569;
+}
+
+@media (max-width: 768px) {
+  .monthSelector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .select {
+    min-width: auto;
+    width: 100%;
+  }
+}

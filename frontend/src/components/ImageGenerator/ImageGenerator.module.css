@@ -161,3 +161,55 @@
   border-radius: 15px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
+
+
+/* 🌙 Dark Mode Overrides */
+:global(.dark) .page {
+  background: #1a1a1a;
+}
+
+:global(.dark) .content {
+  background: #2a2a2a;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .title {
+  color: #ffffff;
+}
+
+:global(.dark) .title span {
+  color: #ff6b35;
+}
+
+:global(.dark) .promptBox {
+  background: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #444444;
+}
+
+:global(.dark) .promptBox:focus {
+  background: #2a2a2a;
+  border-color: #ff6b35;
+}
+
+:global(.dark) .generatedImage {
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .loading-bar-full {
+  background-color: #444;
+}
+
+:global(.dark) .loading-text {
+  color: #ff6b35;
+}
+
+:global(.dark) .backButton {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+:global(.dark) .backButton:hover {
+  background: #ff6b35;
+  color: #fff;
+}

@@ -320,3 +320,109 @@
     gap: 0.8rem;
   }
 }
+
+
+
+/* ================================
+   🌙 DARK MODE STYLING
+   (applies when parent has .dark)
+   ================================ */
+
+:global(.dark) .dashboard {
+  background: #121212; /* deep dark base */
+  color: #e0e0e0;
+}
+
+:global(.dark) .compactHeader {
+  border-bottom: 1px solid #333333;
+}
+
+:global(.dark) .compactTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .veeamLogo {
+  color: #ff784e; /* slightly brighter orange for dark bg */
+}
+
+:global(.dark) .compactControls {
+  background: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: none;
+}
+
+:global(.dark) .backButton {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+:global(.dark) .backButton:hover {
+  background: #ff6b35;
+  color: #ffffff;
+}
+
+:global(.dark) .navButton {
+  background: #1e1e1e;
+  border: 1px solid #333333;
+  color: #cccccc;
+}
+
+:global(.dark) .navButton:hover {
+  background-color: #ff6b35;
+  color: #ffffff;
+  border-color: #e5512a;
+}
+
+:global(.dark) .navButton.activeNav {
+  background-color: #ff6b35;
+  color: #ffffff;
+  border-color: #e5512a;
+  box-shadow: 0 3px 8px rgba(255, 107, 53, 0.3);
+}
+
+:global(.dark) .refreshButton {
+  background: #ff6b35;
+  border-color: #e5512a;
+  color: #ffffff;
+}
+
+:global(.dark) .refreshButton:hover:not(:disabled) {
+  background: #e5512a;
+}
+
+:global(.dark) .loadingContainer,
+:global(.dark) .errorContainer,
+:global(.dark) .noDataContainer {
+  color: #cccccc;
+}
+
+:global(.dark) .spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #ff6b35;
+}
+
+:global(.dark) .errorTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .errorMessage {
+  color: #bbbbbb;
+}
+
+:global(.dark) .retryButton {
+  background: #ff6b35;
+  border-color: #e5512a;
+  color: #ffffff;
+}
+
+:global(.dark) .retryButton:hover {
+  background: #e5512a;
+}
+
+:global(.dark) .noDataTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .noDataMessage {
+  color: #aaaaaa;
+}

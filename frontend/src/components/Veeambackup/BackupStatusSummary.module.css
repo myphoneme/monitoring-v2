@@ -502,3 +502,115 @@
     content: "⚠️ Backup Issues";
   }
 }
+
+/* 🌙 Dark Mode for Backup Status Section */
+/* 🌙 Dark Mode for Backup Status Section */
+:global(.dark) .container {
+  background: #121212;
+}
+
+:global(.dark) .statusTable {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+:global(.dark) .statusTable thead {
+  background: #222;
+}
+
+:global(.dark) .statusTable th {
+  color: #ff9966;
+  border-bottom: 2px solid #444;
+}
+
+/* Working Backups Column */
+:global(.dark) .workingColumn {
+  background: #122618; /* deep green tint */
+  border-right: 1px solid #2f4f3f;
+}
+
+:global(.dark) .groupCard.success {
+  border-left: 3px solid #2ecc71;
+  background: #1a2e22;
+}
+
+:global(.dark) .groupCard.success .groupCardHeader {
+  background: #1f3528;
+}
+
+:global(.dark) .vmCard {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+:global(.dark) .vmName {
+  color: #2ecc71; /* green for working */
+}
+
+/* Backup Issues Column */
+:global(.dark) .issuesColumn {
+  background: #261616; /* deep red tint */
+  border-right: none;
+}
+
+:global(.dark) .groupCard.error {
+  border-left: 3px solid #e74c3c;
+  background: #2e1a1a;
+}
+
+:global(.dark) .groupCard.error .groupCardHeader {
+  background: #3a1f1f;
+}
+
+:global(.dark) .vmName.error {
+  color: #e74c3c; /* red for issues */
+}
+
+/* General Text Adjustments */
+:global(.dark) .groupName,
+:global(.dark) .backupCount,
+:global(.dark) .statNumber {
+  color: #ffffff;
+}
+
+:global(.dark) .groupCount,
+:global(.dark) .vmLastBackup,
+:global(.dark) .backupLabel {
+  color: #aaaaaa;
+}
+
+/* Status Pills */
+:global(.dark) .statusIndicator {
+  background: #222;
+  border: 1px solid #444;
+}
+
+:global(.dark) .statusDot.success {
+  background: #2ecc71;
+}
+
+:global(.dark) .statusDot.error {
+  background: #e74c3c;
+}
+
+:global(.dark) .statusText {
+  color: #e0e0e0;
+}
+
+
+
+/* 🌙 Dark Mode - Fix backup count box */
+:global(.dark) .totalBackups {
+  background: #2a2a2a !important;  /* dark background */
+  border: 1px solid #444 !important;
+}
+
+/* Text inside backup count */
+:global(.dark) .backupCount {
+  color: #ffffff !important;  /* white number */
+}
+
+:global(.dark) .backupLabel {
+  color: #aaaaaa !important;  /* gray label */
+}

@@ -438,3 +438,104 @@
     font-size: 1.1rem;
   }
 }
+
+/* Dark Mode Styles */
+:global(.dark) .container {
+  background: #1a1a1a;
+}
+
+:global(.dark) .header {
+  background: rgba(34, 34, 34, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+:global(.dark) .title {
+  color: #ffffff;
+}
+
+:global(.dark) .titleAccent,
+:global(.dark) .titleIcon {
+  color: #ff6b35;
+}
+
+:global(.dark) .manualSection,
+:global(.dark) .tableSection {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+:global(.dark) .input {
+  background: #1f1f1f;
+  border-color: #444;
+  color: #ffffff;
+}
+
+:global(.dark) .input:focus {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.3);
+}
+
+:global(.dark) .input::placeholder {
+  color: #aaaaaa;
+}
+
+:global(.dark) .inputIcon {
+  color: #cccccc;
+}
+
+:global(.dark) .sectionTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .tableWrapper {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .table {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+:global(.dark) .table thead {
+  background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+}
+
+:global(.dark) .table th {
+  color: #dddddd;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+:global(.dark) .table tbody tr:hover {
+  background: rgba(255, 107, 53, 0.1);
+}
+
+:global(.dark) .ipCell {
+  color: #eeeeee;
+}
+
+:global(.dark) .loadingCard {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+:global(.dark) .loadingTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .loadingText {
+  color: #cccccc;
+}
+
+:global(.dark) .progressBar {
+  background: #444;
+}
+
+:global(.dark) .resultCell {
+  color: #ffffff;
+}
