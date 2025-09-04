@@ -837,6 +837,318 @@
   }
 }
 
+/* Dark Mode Styles */
+:global(.dark) .controlPanel {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .titleStatsRow {
+  border-bottom: 1px solid #475569;
+}
+
+:global(.dark) .title {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:global(.dark) .subtitle {
+  color: #cbd5e1;
+}
+
+:global(.dark) .statCard {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  color: #e2e8f0;
+}
+
+:global(.dark) .statCard:hover {
+  box-shadow: 0 8px 25px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .statCard.success {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  border-color: #16a34a;
+  color: #dcfce7;
+}
+
+:global(.dark) .statCard.error {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #dc2626;
+  color: #fee2e2;
+}
+
+:global(.dark) .statIcon {
+  color: #f1f5f9;
+}
+
+:global(.dark) .statValue {
+  color: #f1f5f9;
+}
+
+:global(.dark) .statLabel {
+  color: #cbd5e1;
+}
+
+:global(.dark) .controlsFiltersRow {
+  border-bottom: 1px solid #475569;
+}
+
+:global(.dark) .dateContainer {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+}
+
+:global(.dark) .dateContainer:hover {
+  border-color: #ff8f65;
+}
+
+:global(.dark) .controlIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .dateSelect {
+  color: #f1f5f9;
+}
+
+:global(.dark) .dateSelect option {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+:global(.dark) .timeModeToggle {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+}
+
+:global(.dark) .toggleButton {
+  color: #cbd5e1;
+}
+
+:global(.dark) .toggleButton.active {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .refreshButton {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  box-shadow: 0 2px 8px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .refreshButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff6b35 0%, #e5512a 100%);
+  box-shadow: 0 4px 12px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .searchInput {
+  border: 2px solid #475569;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  color: #f1f5f9;
+}
+
+:global(.dark) .searchInput:focus {
+  border-color: #ff8f65;
+  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
+  background: #1e293b;
+}
+
+:global(.dark) .searchIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .filtersLegendRow {
+  border-bottom: 1px solid #475569;
+}
+
+:global(.dark) .filterIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .filterSelect {
+  border: 2px solid #475569;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  color: #f1f5f9;
+}
+
+:global(.dark) .filterSelect:focus {
+  border-color: #ff8f65;
+  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
+  background: #1e293b;
+}
+
+:global(.dark) .clearButton {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  box-shadow: 0 2px 8px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .clearButton:hover {
+  background: linear-gradient(135deg, #ff6b35 0%, #e5512a 100%);
+  box-shadow: 0 4px 12px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .legendTitle {
+  color: #f1f5f9;
+}
+
+:global(.dark) .legendItem {
+  background: #334155;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .gridContainer {
+  background: #1e293b;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .gridHeader {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border-bottom: 2px solid #475569;
+}
+
+:global(.dark) .vmNameHeader {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  color: #fff;
+}
+
+:global(.dark) .headerIcon {
+  color: #fff;
+}
+
+:global(.dark) .hourHeader {
+  color: #f1f5f9;
+  border-right: 1px solid #475569;
+}
+
+:global(.dark) .hourIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .gridRow {
+  border-bottom: 1px solid #475569;
+}
+
+:global(.dark) .gridRow:hover {
+  background: rgba(255, 143, 101, 0.1);
+}
+
+:global(.dark) .vmNameCell {
+  border-right: 2px solid #475569;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+:global(.dark) .vmName {
+  color: #f1f5f9;
+}
+
+:global(.dark) .vmIp {
+  color: #cbd5e1;
+}
+
+:global(.dark) .projectTooltip {
+  background: #0f172a;
+  color: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .projectTooltip::before {
+  background: #0f172a;
+}
+
+:global(.dark) .emptyCell {
+  background: #334155;
+  border: 2px dashed #475569;
+}
+
+:global(.dark) .modalOverlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+:global(.dark) .modal {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+:global(.dark) .modalHeader {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  border-bottom: 2px solid #475569;
+}
+
+:global(.dark) .closeButton {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+:global(.dark) .closeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+:global(.dark) .modalContent {
+  background: #1e293b;
+}
+
+:global(.dark) .modalSection h4 {
+  color: #f1f5f9;
+  border-bottom: 2px solid #475569;
+}
+
+:global(.dark) .infoItem {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .infoIcon {
+  color: #ff8f65;
+}
+
+:global(.dark) .infoLabel {
+  color: #cbd5e1;
+}
+
+:global(.dark) .infoValue {
+  color: #f1f5f9;
+}
+
+:global(.dark) .infoValue.success {
+  color: #22c55e;
+}
+
+:global(.dark) .infoValue.error {
+  color: #ff8f65;
+}
+
+:global(.dark) .metricCard {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .metricIcon {
+  color: #ff8f65;
+}
+
+:global(.dark) .metricLabel {
+  color: #cbd5e1;
+}
+
+:global(.dark) .metricBar {
+  background: #475569;
+}
+
+:global(.dark) .metricValue {
+  color: #f1f5f9;
+}
+
+:global(.dark) .diskValue {
+  color: #cbd5e1;
+}
+
 @media (max-width: 768px) {
   .gridContainer {
     overflow-x: auto;

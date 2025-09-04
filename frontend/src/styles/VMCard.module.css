@@ -224,6 +224,82 @@
   font-style: italic;
 }
 
+/* Dark Mode Styles */
+:global(.dark) .vmCard {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 2px solid #475569;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .vmCard:hover {
+  box-shadow: 0 8px 25px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .vmCard.success::before {
+  background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+}
+
+:global(.dark) .vmCard.error::before {
+  background: linear-gradient(90deg, #ff8f65 0%, #ff6b35 100%);
+}
+
+:global(.dark) .vmCard.warning::before {
+  background: linear-gradient(90deg, #facc15 0%, #fbbf24 100%);
+}
+
+:global(.dark) .vmIcon {
+  color: #e2e8f0;
+}
+
+:global(.dark) .vmName h4 {
+  color: #f1f5f9;
+}
+
+:global(.dark) .statusText {
+  color: inherit;
+}
+
+:global(.dark) .label {
+  color: #cbd5e1;
+}
+
+:global(.dark) .value {
+  color: #f1f5f9;
+}
+
+:global(.dark) .metricsContainer {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .metricIcon {
+  color: #e2e8f0;
+}
+
+:global(.dark) .metricLabel {
+  color: #cbd5e1;
+}
+
+:global(.dark) .metricBar {
+  background: #475569;
+}
+
+:global(.dark) .metricValue {
+  color: #f1f5f9;
+}
+
+:global(.dark) .diskValue {
+  color: #cbd5e1;
+}
+
+:global(.dark) .cardFooter {
+  border-top: 1px solid #475569;
+}
+
+:global(.dark) .timestamp {
+  color: #94a3b8;
+}
+
 @media (max-width: 768px) {
   .vmCard {
     padding: 20px;

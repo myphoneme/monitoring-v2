@@ -19,7 +19,9 @@ const PingStatus = () => {
   const [manualResult, setManualResult] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(8); // Reduced page size for better screen fit
+  const [pageTransition, setPageTransition] = useState('');
+  const [error, setError] = useState(null);
 
   // Load VM master data and check ping status only once on initial mount
   useEffect(() => {
@@ -71,6 +73,7 @@ const PingStatus = () => {
     
     try {
       setLoading(true);
+      setError(null);
       
       // Fetch VM master data
       const masterData = await fetchVMMasterData();
@@ -124,6 +127,7 @@ const PingStatus = () => {
       setInitialLoaded(true);
     } catch (error) {
       console.error('Error loading VM data:', error);
+      setError('Failed to load VM data');
     } finally {
       setLoading(false);
     }
@@ -132,6 +136,7 @@ const PingStatus = () => {
   const refreshPingStatus = async () => {
     try {
       setLoading(true);
+      setError(null);
       
       // Fetch VM master data
       const masterData = await fetchVMMasterData();
@@ -184,6 +189,7 @@ const PingStatus = () => {
       setLastUpdated(new Date());
     } catch (error) {
       console.error('Error refreshing VM data:', error);
+      setError('Failed to refresh VM data');
     } finally {
       setLoading(false);
     }
@@ -236,6 +242,23 @@ const PingStatus = () => {
     });
   };
 
+  const handlePageClick = (event) => {
+    const newPage = event.selected;
+    
+    // Add slide-out animation
+    setPageTransition('slide-out');
+    
+    setTimeout(() => {
+      setCurrentPage(newPage);
+      setPageTransition('slide-in');
+      
+      // Remove animation class after animation completes
+      setTimeout(() => {
+        setPageTransition('');
+      }, 300);
+    }, 150);
+  };
+
   const getPingStatusIcon = (vm) => {
     if (!vm.pingChecked) {
       return <AlertCircle className={styles.statusIcon} style={{ color: '#f59e0b' }} />;
@@ -255,10 +278,6 @@ const PingStatus = () => {
   const getPingStatusClass = (vm) => {
     if (!vm.pingChecked) return styles.warning;
     return vm.pingStatus ? styles.success : styles.error;
-  };
-
-  const handlePageClick = (event) => {
-    setCurrentPage(event.selected);
   };
 
   const getStats = () => {
@@ -411,69 +430,103 @@ const PingStatus = () => {
         )}
       </div>
 
-      {/* Compact Table */}
-      {loading ? (
-        <div className={styles.loadingContainer}>
-          <RefreshCw className={`${styles.loadingIcon} ${styles.spinning}`} />
-          <p>Loading and checking ping status...</p>
+      {/* Error Display */}
+      {error && (
+        <div className={styles.errorContainer}>
+          <AlertCircle className={styles.errorIcon} />
+          <p>{error}</p>
         </div>
-      ) : filteredVMs.length === 0 ? (
-        <div className={styles.noData}>
-          <AlertCircle className={styles.noDataIcon} />
-          <p>No VMs found matching your criteria</p>
-        </div>
-      ) : (
-        <>
-          <div className={styles.compactTableContainer}>
-            <table className={styles.compactTable}>
-              <thead>
-                <tr>
-                  <th>VM Name</th>
-                  <th>IP Address</th>
-                  <th>Project</th>
-                  <th>Ping Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentPageData.map(vm => (
-                  <tr key={vm.id} className={styles.compactTableRow}>
-                    <td className={styles.vmName}>{vm.vm_name}</td>
-                    <td className={styles.ip}>{vm.ip}</td>
-                    <td>{vm.project_name || 'N/A'}</td>
-                    <td className={styles.compactStatusCell}>
-                      <div className={`${styles.compactStatusBadge} ${getPingStatusClass(vm)}`}>
-                        {getPingStatusIcon(vm)}
-                        <span>{getPingStatusText(vm)}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {pageCount > 1 && (
-            <div className={styles.paginationContainer}>
-              <ReactPaginate
-                previousLabel="← Previous"
-                nextLabel="Next →"
-                breakLabel="..."
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={handlePageClick}
-                containerClassName={styles.pagination}
-                activeClassName={styles.active}
-                previousClassName={styles.previous}
-                nextClassName={styles.next}
-                disabledClassName={styles.disabled}
-                breakClassName={styles.break}
-                forcePage={currentPage}
-              />
-            </div>
-          )}
-        </>
       )}
+
+      {/* Main Content Container */}
+      <div className={styles.mainContentContainer}>
+        {/* Compact Table */}
+        {loading && vmData.length === 0 ? (
+          <div className={styles.loadingContainer}>
+            <RefreshCw className={`${styles.loadingIcon} ${styles.spinning}`} />
+            <p>Loading and checking ping status for all VMs...</p>
+          </div>
+        ) : filteredVMs.length === 0 && !loading ? (
+          <div className={styles.noData}>
+            <AlertCircle className={styles.noDataIcon} />
+            <p>No VMs found matching your criteria</p>
+          </div>
+        ) : (
+          <>
+            {/* Loading overlay for refresh */}
+            {loading && vmData.length > 0 && (
+              <div className={styles.refreshOverlay}>
+                <div className={styles.refreshIndicator}>
+                  <RefreshCw className={`${styles.refreshIcon} ${styles.spinning}`} />
+                  <span>Refreshing ping status...</span>
+                </div>
+              </div>
+            )}
+            
+            <div className={styles.compactTableContainer}>
+              <div className={`${styles.tableWrapper} ${pageTransition ? styles[pageTransition] : ''}`}>
+                <table className={styles.compactTable}>
+                  <thead>
+                    <tr>
+                      <th>VM Name</th>
+                      <th>IP Address</th>
+                      <th>Project</th>
+                      <th>Ping Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentPageData.map(vm => (
+                      <tr key={vm.id} className={styles.compactTableRow}>
+                        <td className={styles.vmName}>{vm.vm_name}</td>
+                        <td className={styles.ip}>{vm.ip}</td>
+                        <td>{vm.project_name || 'N/A'}</td>
+                        <td className={styles.compactStatusCell}>
+                          <div className={`${styles.compactStatusBadge} ${getPingStatusClass(vm)}`}>
+                            {getPingStatusIcon(vm)}
+                            <span>{getPingStatusText(vm)}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredVMs.length === 0 && (
+                <div className={styles.noData}>
+                  <AlertCircle className={styles.noDataIcon} />
+                  <p>No VMs found matching your search criteria</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Modern Pagination - Now part of main content */}
+        {pageCount > 1 && !loading && (
+          <div className={styles.paginationContainer}>
+            <div className={styles.paginationInfo}>
+              Showing {offset + 1}-{Math.min(offset + pageSize, filteredVMs.length)} of {filteredVMs.length} VMs
+            </div>
+            <ReactPaginate
+              previousLabel="← Previous"
+              nextLabel="Next →"
+              breakLabel="..."
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={styles.pagination}
+              activeClassName={styles.active}
+              previousClassName={styles.previous}
+              nextClassName={styles.next}
+              disabledClassName={styles.disabled}
+              breakClassName={styles.break}
+              forcePage={currentPage}
+            />
+          </div>
+        )}
+      </div>
 
       {showBackToTop && (
         <button 

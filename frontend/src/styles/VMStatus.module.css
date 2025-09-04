@@ -554,6 +554,281 @@
   height: 24px;
 }
 
+/* Dark Mode Styles */
+:global(.dark) .vmStatus {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+:global(.dark) .header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+:global(.dark) .title {
+  color: #f1f5f9;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .subtitle {
+  color: #cbd5e1;
+}
+
+:global(.dark) .filterIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .dateSelect,
+:global(.dark) .statusSelect {
+  border: 2px solid rgba(255, 143, 101, 0.2);
+  background: rgba(255, 143, 101, 0.1);
+  color: #f1f5f9;
+}
+
+:global(.dark) .dateSelect option,
+:global(.dark) .statusSelect option {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+:global(.dark) .dateSelect:focus,
+:global(.dark) .statusSelect:focus {
+  border-color: #ff8f65;
+  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
+}
+
+:global(.dark) .searchIcon {
+  color: #cbd5e1;
+}
+
+:global(.dark) .searchInput {
+  border: 2px solid rgba(255, 143, 101, 0.2);
+  background: rgba(255, 143, 101, 0.1);
+  color: #f1f5f9;
+}
+
+:global(.dark) .searchInput::placeholder {
+  color: #cbd5e1;
+}
+
+:global(.dark) .searchInput:focus {
+  border-color: #ff8f65;
+  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
+}
+
+:global(.dark) .refreshButton {
+  background: rgba(255, 143, 101, 0.2);
+  border: 2px solid rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .refreshButton:hover:not(:disabled) {
+  background: rgba(255, 143, 101, 0.3);
+  border-color: #ff8f65;
+  box-shadow: 0 8px 25px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .loadingContainer {
+  color: #cbd5e1;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .loadingIcon {
+  color: #ff8f65;
+}
+
+:global(.dark) .noData {
+  color: #cbd5e1;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .dateSection {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .dateTitle {
+  color: #f1f5f9;
+  border-bottom: 3px solid #475569;
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:global(.dark) .hourGroup {
+  border: 2px solid #475569;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .hourGroup:hover {
+  box-shadow: 0 8px 25px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .hourHeader {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border-bottom: 2px solid #475569;
+}
+
+:global(.dark) .hourHeader:hover {
+  background: rgba(255, 143, 101, 0.1);
+}
+
+:global(.dark) .hourTitle {
+  color: #f1f5f9;
+}
+
+:global(.dark) .chevron {
+  color: #cbd5e1;
+}
+
+:global(.dark) .clockIcon {
+  color: #ff8f65;
+}
+
+:global(.dark) .hourStat {
+  background: #1e293b;
+  border: 2px solid #475569;
+  color: #cbd5e1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .hourStat.success {
+  color: #22c55e;
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  border-color: #16a34a;
+  color: #dcfce7;
+}
+
+:global(.dark) .hourStat.error {
+  color: #ff8f65;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #dc2626;
+  color: #fee2e2;
+}
+
+:global(.dark) .hourStat.info {
+  color: #fbbf24;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border-color: #f59e0b;
+  color: #78350f;
+}
+
+:global(.dark) .statusGrid {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+:global(.dark) .statusCard {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .statusCard::before {
+  background: #475569;
+}
+
+:global(.dark) .statusCard.success::before {
+  background: linear-gradient(90deg, #22c55e, #3b82f6);
+}
+
+:global(.dark) .statusCard.error::before {
+  background: linear-gradient(90deg, #ff8f65, #ff6b35);
+}
+
+:global(.dark) .statusCard.info::before {
+  background: linear-gradient(90deg, #fbbf24, #facc15);
+}
+
+:global(.dark) .statusCard:hover {
+  box-shadow: 0 12px 30px rgba(255, 143, 101, 0.2);
+}
+
+:global(.dark) .vmName {
+  color: #f1f5f9;
+}
+
+:global(.dark) .ip {
+  color: #f1f5f9;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .statusChange {
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .statusIcon.success {
+  color: #22c55e;
+}
+
+:global(.dark) .statusIcon.error {
+  color: #ff8f65;
+}
+
+:global(.dark) .statusIcon.info {
+  color: #fbbf24;
+}
+
+:global(.dark) .changeText {
+  color: #f1f5f9;
+}
+
+:global(.dark) .success .changeText {
+  color: #22c55e;
+}
+
+:global(.dark) .error .changeText {
+  color: #ff8f65;
+}
+
+:global(.dark) .info .changeText {
+  color: #fbbf24;
+}
+
+:global(.dark) .statusComparison {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 1px solid #475569;
+}
+
+:global(.dark) .label {
+  color: #cbd5e1;
+}
+
+:global(.dark) .status.reachable {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  color: #dcfce7;
+  border: 1px solid #16a34a;
+}
+
+:global(.dark) .status.unreachable {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: #fee2e2;
+  border: 1px solid #dc2626;
+}
+
+:global(.dark) .time {
+  color: #f1f5f9;
+}
+
+:global(.dark) .tag {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  color: #f1f5f9;
+  border: 1px solid #475569;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .backToTop {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  box-shadow: 0 4px 20px rgba(255, 143, 101, 0.4);
+}
+
+:global(.dark) .backToTop:hover {
+  box-shadow: 0 8px 30px rgba(255, 143, 101, 0.6);
+}
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
