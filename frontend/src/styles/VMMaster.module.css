@@ -568,6 +568,12 @@
   transition: all 0.2s ease;
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #111827; /* ensure text is visible on light background */
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+  color: #9ca3af; /* subtle placeholder in light mode */
 }
 
 .formGroup input:focus,

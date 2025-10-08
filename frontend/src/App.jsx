@@ -16,6 +16,8 @@ import IpCheck from './components/IpCheck/IpCheck';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 import VmMonitor from '././components/Vmmonitoring/VmMonitor';
+import { AuthProvider } from './context/AuthContext';
+import LoginModal from './components/Auth/LoginModal';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -38,11 +40,12 @@ function App() {
 
   return (
     <Router>
-      <ScrollToTop />
-      <div className={`app ${isDarkMode ? 'dark' : 'light'}`} style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
-        <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-        <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-          <Routes>
+      <AuthProvider>
+        <ScrollToTop />
+        <div className={`app ${isDarkMode ? 'dark' : 'light'}`} style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+          <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+          <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+            <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<About />} />
@@ -54,10 +57,12 @@ function App() {
             <Route path="/tools/information-extractor" element={<InformationExtractor />} /> {/* <-- Add this route */}
             <Route path="/tools/image-generator" element={<ImageGenerator />} />
             <Route path="/tools/ip-checker" element={<IpCheck/>} />
-          </Routes>
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+        <LoginModal />
+      </AuthProvider>
     </Router>
   );
 }

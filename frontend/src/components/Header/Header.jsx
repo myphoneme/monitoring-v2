@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
 import phonemeLogo from '../../../phoneme_logo.png';
+import { useAuth } from '../../context/AuthContext';
+import CreateUserModal from '../Auth/CreateUserModal';
 
 const Header = ({ isDarkMode, toggleTheme }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, hasValidToken, clear } = useAuth();
+  const [showMenu, setShowMenu] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -52,7 +58,29 @@ const Header = ({ isDarkMode, toggleTheme }) => {
             {isDarkMode ? '☀️' : '🌙'}
           </button>
           <div className={styles.notificationIcon}>🔔</div>
-          <div className={styles.profileIcon}>👤</div>
+          {hasValidToken && user ? (
+            <div className={styles.profileWrapper}>
+              <button className={styles.avatar} onClick={() => setShowMenu(!showMenu)} aria-label="Profile menu">
+                {user.name?.charAt(0)?.toUpperCase() || 'U'}
+              </button>
+              {showMenu && (
+                <div className={styles.profileMenu} onMouseLeave={() => setShowMenu(false)}>
+                  <div className={styles.profileDetails}>
+                    <div className={styles.profileName}>{user.name}</div>
+                    <div className={styles.profileEmail}>{user.email}</div>
+                  </div>
+                  {Number(user?.role) === 1 && (
+                    <button className={styles.logoutBtn} onClick={() => { setShowCreateUser(true); setShowMenu(false); }}>
+                      Create User
+                    </button>
+                  )}
+                  <button className={styles.logoutBtn} onClick={() => { clear(); setShowMenu(false); navigate('/'); }}>Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.profileIcon}>👤</div>
+          )}
         </div>
 
         <button 
@@ -65,6 +93,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
           <span></span>
         </button>
       </div>
+      <CreateUserModal open={showCreateUser} onClose={() => setShowCreateUser(false)} />
     </header>
   );
 };

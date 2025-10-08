@@ -1,10 +1,11 @@
-from fastapi import FastAPI, File, UploadFile, Response
+from fastapi import FastAPI, File, UploadFile, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List
 import os
 import shutil
+from datetime import datetime
 
 from app import core_logic
 from Information import TenderAnalyzer
@@ -436,3 +437,120 @@ def generate_pdf(data: QuotationRequest):
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=vm_quotation.pdf"},
     )
+
+
+# ---------- VM Monitoring Endpoints ----------
+class VMStatus(BaseModel):
+    id: Optional[int] = None
+    ip: str
+    status: str  # "reachable" or "not reachable"
+    created_at: Optional[datetime] = None
+    vm_master: Optional[dict] = None
+
+class VMMaster(BaseModel):
+    id: Optional[int] = None
+    vm_name: str
+    ip: str
+    project_name: Optional[str] = None
+    cluster: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+# In-memory storage for demo purposes (replace with database in production)
+vm_status_data = []
+vm_master_data = [
+    {
+        "id": 1,
+        "vm_name": "Web Server 1",
+        "ip": "192.168.1.10",
+        "project_name": "E-commerce Platform",
+        "cluster": "Production",
+        "created_at": datetime.now().isoformat()
+    },
+    {
+        "id": 2,
+        "vm_name": "Database Server",
+        "ip": "192.168.1.11",
+        "project_name": "E-commerce Platform",
+        "cluster": "Production",
+        "created_at": datetime.now().isoformat()
+    },
+    {
+        "id": 3,
+        "vm_name": "Test Server",
+        "ip": "192.168.1.20",
+        "project_name": "Development",
+        "cluster": "Testing",
+        "created_at": datetime.now().isoformat()
+    }
+]
+
+# Add some sample status data
+vm_status_data = [
+    {
+        "id": 1,
+        "ip": "192.168.1.10",
+        "status": "reachable",
+        "created_at": datetime.now().isoformat(),
+        "vm_master": vm_master_data[0]
+    },
+    {
+        "id": 2,
+        "ip": "192.168.1.11",
+        "status": "reachable",
+        "created_at": datetime.now().isoformat(),
+        "vm_master": vm_master_data[1]
+    },
+    {
+        "id": 3,
+        "ip": "192.168.1.20",
+        "status": "not reachable",
+        "created_at": datetime.now().isoformat(),
+        "vm_master": vm_master_data[2]
+    }
+]
+
+@app.get("/status")
+async def get_vm_status():
+    """Get VM status data"""
+    return vm_status_data
+
+@app.get("/vm")
+async def get_vm_master():
+    """Get VM master data"""
+    return vm_master_data
+
+@app.post("/vm")
+async def create_vm(vm_data: VMMaster):
+    """Create a new VM"""
+    vm_data.id = len(vm_master_data) + 1
+    vm_data.created_at = datetime.now()
+    vm_master_data.append(vm_data.dict())
+    return vm_data
+
+@app.put("/vm/{vm_id}")
+async def update_vm(vm_id: int, vm_data: VMMaster):
+    """Update a VM"""
+    for i, vm in enumerate(vm_master_data):
+        if vm.get("id") == vm_id:
+            vm_data.id = vm_id
+            vm_data.created_at = vm.get("created_at", datetime.now())
+            vm_master_data[i] = vm_data.dict()
+            return vm_data
+    raise HTTPException(status_code=404, detail="VM not found")
+
+@app.delete("/vm/{vm_id}")
+async def delete_vm(vm_id: int):
+    """Delete a VM"""
+    for i, vm in enumerate(vm_master_data):
+        if vm.get("id") == vm_id:
+            deleted_vm = vm_master_data.pop(i)
+            return {"message": "VM deleted successfully", "vm": deleted_vm}
+    raise HTTPException(status_code=404, detail="VM not found")
+
+@app.post("/status")
+async def create_vm_status(status_data: VMStatus):
+    """Create a new VM status entry"""
+    status_data.id = len(vm_status_data) + 1
+    status_data.created_at = datetime.now()
+    vm_status_data.append(status_data.dict())
+    return status_data
