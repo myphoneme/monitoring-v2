@@ -134,36 +134,36 @@ const Support = () => {
           <div className={styles.infoSection}>
             <div className={styles.mapCard}>
               <iframe
-                title="Advant Navis Business Park Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.019282019994!2d77.4144300754066!3d28.61393997567809!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ceffb6e2b6b2d%3A0x6e2b6b2d6e2b6b2d!2sAdvant%20Navis%20Business%20Park!5e0!3m2!1sen!2sin!4v1716460000000!5m2!1sen!2sin"
-                width="100%"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.1379062793144!2d77.71509747507632!3d12.963026087351555!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae12234316bc5f%3A0x5924638b6277e58d!2sSRIT!5e0!3m2!1sen!2sin!4v1759493887215!5m2!1sen!2sin"
+                width="600"
                 height="150"
-                style={{ border: 0, borderRadius: '8px', width: '100%' }}
-                allowFullScreen=""
+                style={{ border: 0 }}   // ✅ FIXED
+                allowFullScreen=""      // ✅ React uses camelCase
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
+              />
+
             </div>
             <div className={styles.contactCards}>
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><LocationIcon /></span>
                 <div>
                   <strong>Office</strong>
-                  <div>Phoneme Solution<br/>Advant Navis, Sector-142,<br/>Noida, UP-201307</div>
+                  <div>SRIT India<br/>No.113/1B, ITPL Main road, Kundalahalli, Bengaluru - 560037 </div>
                 </div>
               </div>
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><MailIcon /></span>
                 <div>
                   <strong>Email</strong>
-                  <div>Hr@myphoneme.com</div>
+                  <div>info@renaissance-it.com</div>
                 </div>
               </div>
               <div className={styles.contactCard}>
                 <span className={styles.contactIcon}><GlobeIcon /></span>
                 <div>
                   <strong>Website</strong>
-                  <div><a href="https://myphoneme.com/" target="_blank" rel="noopener noreferrer">myphoneme.com</a></div>
+                  <div><a href="https://www.sritindia.com/" target="_blank" rel="noopener noreferrer">sritindia.com</a></div>
                 </div>
               </div>
             </div>

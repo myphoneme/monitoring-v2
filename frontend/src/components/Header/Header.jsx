@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import phonemeLogo from '../../../phoneme_logo.png';
+import sritLogo from '../../../srit-india-logo.webp';
 import { useAuth } from '../../context/AuthContext';
 import CreateUserModal from '../Auth/CreateUserModal';
 
@@ -19,7 +19,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <img src={phonemeLogo} alt="Phoneme Logo" className={styles.logoImg} />
+          <img src={sritLogo} alt="Srit India Logo" className={styles.logoImg} />
         </Link>
         
         <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
@@ -41,12 +41,12 @@ const Header = ({ isDarkMode, toggleTheme }) => {
           >
             Support
           </Link>
-          <Link 
+          {/* <Link 
             to="/tools" 
             className={`${styles.navLink} ${isActive('/tools') ? styles.active : ''}`}
           >
             Employee Tools
-          </Link>
+          </Link> */}
         </nav>
 
         <div className={styles.headerActions}>

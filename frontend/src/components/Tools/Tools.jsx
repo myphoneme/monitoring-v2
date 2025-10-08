@@ -55,33 +55,33 @@ const Tools = () => {
     //   link: '/tools/reports',
     //   featured: false
     // },
-    {
-      id: 9,
-      title: 'Quotation Generator',
-      description: 'Create and download professional quotations for clients easily.',
-      icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
-      category: 'Utilities',
-      link: '/tools/quotation-generator',
-      featured: true
-    },
-    {
-      id: 10,
-      title: 'Offer Letter Generator',
-      description: 'Generate customized offer letters for new hires quickly.',
-      icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
-      category: 'HR',
-      link: '/tools/offer-letter-generator',
-      featured: false
-    },
-    {
-      id: 11,
-      title: 'Information Extractor',
-      description: 'Extract key information from documents or text automatically.',
-      icon: '🔍',
-      category: 'AI Tools',
-      link: '/tools/information-extractor',
-      featured: false
-    },
+    // {
+    //   id: 9,
+    //   title: 'Quotation Generator',
+    //   description: 'Create and download professional quotations for clients easily.',
+    //   icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
+    //   category: 'Utilities',
+    //   link: '/tools/quotation-generator',
+    //   featured: true
+    // },
+    // {
+    //   id: 10,
+    //   title: 'Offer Letter Generator',
+    //   description: 'Generate customized offer letters for new hires quickly.',
+    //   icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />,
+    //   category: 'HR',
+    //   link: '/tools/offer-letter-generator',
+    //   featured: false
+    // },
+    // {
+    //   id: 11,
+    //   title: 'Information Extractor',
+    //   description: 'Extract key information from documents or text automatically.',
+    //   icon: '🔍',
+    //   category: 'AI Tools',
+    //   link: '/tools/information-extractor',
+    //   featured: false
+    // },
     {
       id: 12,
       title: 'Veeam Backup Dashboard',
@@ -100,15 +100,15 @@ const Tools = () => {
       link: '/tools/vm-monitoring',
       featured: true
     },
-    {
-      id: 14,
-      title: 'Image Generator',
-      description: 'Generate Customized Images.',
-      icon: '🖥️',
-      category: 'AI Tools',
-      link: '/tools/image-generator',
-      featured: true
-    },
+    // {
+    //   id: 14,
+    //   title: 'Image Generator',
+    //   description: 'Generate Customized Images.',
+    //   icon: '🖥️',
+    //   category: 'AI Tools',
+    //   link: '/tools/image-generator',
+    //   featured: true
+    // },
     {
       id: 15,
       title: 'VM IP CHECKER',

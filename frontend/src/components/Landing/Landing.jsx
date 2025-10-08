@@ -6,33 +6,33 @@ import jobOfferImg from '../../../job-offer.png';
 
 const Landing = () => {
   const quickAccessItems = [ 
-    {
-      id: 9,
-      title: 'Quotation Generator',
-      description: 'Create and download professional quotations for clients easily.',
-      icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
-      category: 'Utilities',
-      link: '/tools/quotation-generator',
-      featured: true
-    },
-    {
-      id: 10,
-      title: 'Offer Letter Generator',
-      description: 'Generate customized offer letters for new hires quickly.',
-      icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
-      category: 'HR',
-      link: '/tools/offer-letter-generator',
-      featured: true
-    },
-    {
-      id: 11,
-      title: 'Information Extractor',
-      description: 'Extract key information from documents or text automatically.',
-      icon: '🔍',
-      category: 'AI Tools',
-      link: '/tools/information-extractor',
-      featured: true
-    },
+    // {
+    //   id: 9,
+    //   title: 'Quotation Generator',
+    //   description: 'Create and download professional quotations for clients easily.',
+    //   icon: <img src={quotationImg} alt="Quotation Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
+    //   category: 'Utilities',
+    //   link: '/tools/quotation-generator',
+    //   featured: true
+    // },
+    // {
+    //   id: 10,
+    //   title: 'Offer Letter Generator',
+    //   description: 'Generate customized offer letters for new hires quickly.',
+    //   icon: <img src={jobOfferImg} alt="Offer Letter Generator" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />, 
+    //   category: 'HR',
+    //   link: '/tools/offer-letter-generator',
+    //   featured: true
+    // },
+    // {
+    //   id: 11,
+    //   title: 'Information Extractor',
+    //   description: 'Extract key information from documents or text automatically.',
+    //   icon: '🔍',
+    //   category: 'AI Tools',
+    //   link: '/tools/information-extractor',
+    //   featured: true
+    // },
     {
       id: 12,
       title: 'Veeam Backup Dashboard',
@@ -50,16 +50,17 @@ const Landing = () => {
       category: 'Monitoring',
       link: '/tools/vm-monitoring',
       featured: true
-    },
-    {
-      id: 14,
-      title: 'Image Generator',
-      description: 'Generate Customized Images.',
-      icon: '🖥️',
-      category: 'AI Tools',
-      link: '/tools/image-generator',
-      featured: true
     }
+    // ,
+    // {
+    //   id: 14,
+    //   title: 'Image Generator',
+    //   description: 'Generate Customized Images.',
+    //   icon: '🖥️',
+    //   category: 'AI Tools',
+    //   link: '/tools/image-generator',
+    //   featured: true
+    // }
     // ,
     // {
     //   id: 15,
@@ -87,11 +88,12 @@ const Landing = () => {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>
-              Welcome to <span className={styles.brandName}>PHONEME</span>
+              Welcome to <span className={styles.brandName}>SRIT</span>
             </h1>
             <p className={styles.heroSubtitle}>
-              Making technology friendly to human beings. Experience the power of voice 
-              technology and innovative solutions designed for the modern world.
+              We focus on verticals like Healthcare, eGovernance, Insurance and Telecom & Broadband and other domains, where large-scale operations and process lifecycles can be streamlined.
+
+
             </p>
             <Link to="/dashboard" className={styles.getStartedBtn}>
               Get Started

@@ -6,23 +6,19 @@ const About = () => {
   const values = [
     {
       id: 1,
-      text: "Innovate: Not just execute, but create new standards in the industry."
+      text: "Industry Focus: Healthcare, eGovernance, Insurance, Telecom."
     },
     {
       id: 2,
-      text: "Do business for long-term industry gain, not just short-term profit."
+      text: "End-to-End Automation: Comprehensive solutions from start to finish."
     },
     {
       id: 3,
-      text: "Integrity is our most precious value—always do what is right."
+      text: "Managed IT Services: Full lifecycle support for optimal performance."
     },
     {
       id: 4,
-      text: "Know the facts: Good data leads to the right decisions."
-    },
-    {
-      id: 5,
-      text: "Work to live, not live to work. Find happiness in what you do—\"You only live once, and if you work it right, once is enough.\""
+      text: "Certifications & Quality: CMMi-5, ISO 27001, ISO 9001."
     }
   ];
 
@@ -45,16 +41,16 @@ const About = () => {
             
             <div className={styles.description}>
               <p>
-                Founded by IITians, with the objective of making technologies friendly to 
-                human beings. Our main goal is to reach the masses, especially in developing 
-                nations where internet and literacy are major challenges.
+                SRIT delivers end-to-end software solutions across sectors like Healthcare, eGovernance, Insurance, and Telecom. 
+                With over 20 years of experience, we focus on automating large-scale operations, transforming industries with cutting-edge technology.
+                Our commitment to integrity and excellence drives us to provide sustainable, high-performance solutions.
               </p>
               
-              <p>
+              {/* <p>
                 In the initial years, our focus is on Voice, the most widely used channel over 
                 the phone. Over time, these technologies will pave the way into Mobile Apps 
                 and embedded devices, making a difference everywhere.
-              </p>
+              </p> */}
             </div>
             
             <div className={styles.values}>
