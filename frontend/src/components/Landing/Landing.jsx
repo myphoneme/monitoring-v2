@@ -39,7 +39,8 @@ const Landing = () => {
       description: 'Monitor and manage Veeam backup operations.',
       icon: '🖥️',
       category: 'Monitoring',
-      link: '/tools/veeam-backup',
+      // link: '/tools/veeam-backup',
+      link: '/',
       featured: true
     },
     {
@@ -61,16 +62,16 @@ const Landing = () => {
     //   link: '/tools/image-generator',
     //   featured: true
     // }
-    // ,
-    // {
-    //   id: 15,
-    //   title: 'VM IP CHECKER',
-    //   description: 'Check IP Reachable or Not.',
-    //   icon: '🖥️',
-    //   category: 'AI Tools',
-    //   link: '/tools/ip-checker',
-    //   featured: true
-    // }
+    ,
+    {
+      id: 15,
+      title: 'VM IP CHECKER',
+      description: 'Check IP Reachable or Not.',
+      icon: '🖥️',
+      category: 'AI Tools',
+      link: '/tools/ip-checker',
+      featured: true
+    }
   ];
 
   return (

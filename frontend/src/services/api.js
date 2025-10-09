@@ -122,6 +122,16 @@ export const deleteVM = async (vmId) => {
   }
 };
 
+export const fetchRealtimePingStatus = async () => {
+  try {
+    const response = await api.get('/monitor/ping');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching real-time ping status:', error);
+    throw error;
+  }
+};
+
 // ---- Users ----
 export const createUser = async (user) => {
   // Guard on client: enforce admin role

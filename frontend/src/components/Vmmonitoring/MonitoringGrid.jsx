@@ -23,7 +23,7 @@ import {
   Filter,
   FolderOpen
 } from 'lucide-react';
-import { fetchVMMasterData } from '../../services/api';
+import { fetchVMMasterData, fetchRealtimePingStatus } from '../../services/api';
 import styles from '../../styles/MonitoringGrid.module.css';
 
 const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
@@ -46,6 +46,10 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const [projectFilter, setProjectFilter] = useState('all');
   const [availableProjects, setAvailableProjects] = useState([]);
   const [vmMasterData, setVmMasterData] = useState([]);
+  
+  // Real-time status state
+  const [realtimeStatus, setRealtimeStatus] = useState({});
+  const [realtimeLoading, setRealtimeLoading] = useState(false);
 
   // Load VM master data on component mount
   useEffect(() => {
@@ -58,6 +62,41 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
       }
     };
     loadVMMasterData();
+  }, []);
+
+  // Real-time status polling
+  useEffect(() => {
+    const fetchRealtimeStatus = async () => {
+      try {
+        setRealtimeLoading(true);
+        const statusData = await fetchRealtimePingStatus();
+        
+        // Convert array to object for easier lookup
+        const statusMap = {};
+        statusData.forEach(item => {
+          const key = `${item.vm_ip}-${item.vm_name}`;
+          statusMap[key] = {
+            reachable: item.reachable,
+            vm_ip: item.vm_ip,
+            vm_name: item.vm_name
+          };
+        });
+        
+        setRealtimeStatus(statusMap);
+      } catch (error) {
+        console.error('Error fetching real-time status:', error);
+      } finally {
+        setRealtimeLoading(false);
+      }
+    };
+
+    // Initial fetch
+    fetchRealtimeStatus();
+
+    // Set up polling every 5 seconds
+    const interval = setInterval(fetchRealtimeStatus, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Generate hours for AM/PM
@@ -354,6 +393,26 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
     return vmStatuses.length > 0 ? vmStatuses[0].current_status : 'unknown';
   };
 
+  const getRealtimeStatus = (ip, vmName) => {
+    const key = `${ip}-${vmName}`;
+    return realtimeStatus[key] || null;
+  };
+
+  const RealtimeStatusIndicator = ({ ip, vmName }) => {
+    const status = getRealtimeStatus(ip, vmName);
+    
+    if (!status) {
+      return <div className={styles.statusIndicator} style={{ background: '#64748b' }} title="Status Unknown"></div>;
+    }
+    
+    return (
+      <div 
+        className={`${styles.statusIndicator} ${status.reachable ? styles.reachable : styles.unreachable}`}
+        title={`Real-time Status: ${status.reachable ? 'Reachable' : 'Unreachable'}`}
+      />
+    );
+  };
+
   const getStatusIcon = (hourData) => {
     if (!hourData || hourData.length === 0) {
       return <div className={styles.emptyCell}></div>;
@@ -624,7 +683,21 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
 
           <div className={styles.legendContainer}>
             <div className={styles.legend}>
-              <div className={styles.legendTitle}>Status Legend:</div>
+              <div className={styles.legendTitle}>Real-time Status:</div>
+              <div className={styles.legendItems}>
+                <div className={styles.legendItem}>
+                  <div className={`${styles.statusIndicator} ${styles.reachable}`}></div>
+                  <span>Currently Reachable</span>
+                </div>
+                <div className={styles.legendItem}>
+                  <div className={`${styles.statusIndicator} ${styles.unreachable}`}></div>
+                  <span>Currently Unreachable</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.legend}>
+              <div className={styles.legendTitle}>Historical Status:</div>
               <div className={styles.legendItems}>
                 <div className={styles.legendItem}>
                   <CheckCircle style={{ color: '#10b981' }} />
@@ -645,7 +718,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
               </div>
             </div>
             
-            <div className={styles.severityLegend}>
+            {/* <div className={styles.severityLegend}>
               <div className={styles.legendTitle}>VM Health:</div>
               <div className={styles.legendItems}>
                 <div className={styles.legendItem}>
@@ -665,7 +738,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
                   <span>Hazardous (&gt;3 days)</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -711,7 +784,10 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
                         )}
                       </div>
                       <div className={styles.vmDetails}>
-                        <span className={styles.vmName}>{vmData.vm_name}</span>
+                        <div className={styles.vmNameRow}>
+                          <RealtimeStatusIndicator ip={vmData.ip} vmName={vmData.vm_name} />
+                          <span className={styles.vmName}>{vmData.vm_name}</span>
+                        </div>
                         <span className={styles.vmIp}>{vmData.ip}</span>
                       </div>
                     </div>

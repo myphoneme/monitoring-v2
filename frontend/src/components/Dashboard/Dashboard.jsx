@@ -42,7 +42,8 @@ const Dashboard = () => {
           description: 'Monitor and manage Veeam backup operations.',
           icon: '🖥️',
           category: 'Monitoring',
-          link: '/tools/veeam-backup',
+          // link: '/tools/veeam-backup',
+          link: '/',
           featured: true
         },
         {
