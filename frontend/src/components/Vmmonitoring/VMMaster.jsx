@@ -175,7 +175,7 @@ const VMMaster = () => {
               onClick={() => setFlashMessage(null)}
               className={styles.flashClose}
             >
-              <X size={16} />
+              <X size={8} />
             </button>
           </div>
         </div>
@@ -298,7 +298,7 @@ const VMMaster = () => {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3>{editingVM ? 'Edit VM Configuration' : 'Add New VM'}</h3>
+              <h4>{editingVM ? 'Edit VM Configuration' : 'Add New VM'}</h4>
               <button 
                 onClick={() => setShowModal(false)}
                 className={styles.closeButton}

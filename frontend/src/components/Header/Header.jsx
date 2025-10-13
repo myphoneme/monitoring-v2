@@ -14,6 +14,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
   const [showCreateUser, setShowCreateUser] = useState(false);
 
   const isActive = (path) => location.pathname === path;
+  console.log('user:', user, 'hasValidToken:', hasValidToken);
 
   return (
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
@@ -64,7 +65,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                 {user.name?.charAt(0)?.toUpperCase() || 'U'}
               </button>
               {showMenu && (
-                <div className={styles.profileMenu} onMouseLeave={() => setShowMenu(false)}>
+                <div className={styles.profileMenu}>
                   <div className={styles.profileDetails}>
                     <div className={styles.profileName}>{user.name}</div>
                     <div className={styles.profileEmail}>{user.email}</div>

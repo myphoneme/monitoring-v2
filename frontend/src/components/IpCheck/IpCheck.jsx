@@ -14,7 +14,7 @@ const IpCheck = () => {
   // Ping function
   const checkPing = async (ip) => {
     try {
-      const res = await fetch('https://fastapi.phoneme.in/ping-status', {
+      const res = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ip }),
@@ -31,7 +31,7 @@ const IpCheck = () => {
     setVmLoading(true);
     setVmResults({}); // clear old results
     try {
-      const res = await fetch('https://fastapi.phoneme.in/vm/master_vms');
+      const res = await fetch('http://10.0.5.22:8000/vm/');
       const vms = await res.json();
 
       const results = {};

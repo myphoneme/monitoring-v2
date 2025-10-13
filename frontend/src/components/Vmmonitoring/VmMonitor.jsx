@@ -131,7 +131,7 @@ const VmMonitor = () => {
     const vmDataWithPing = await Promise.all(
       masterData.map(async (vm) => {
         try {
-          const pingResponse = await fetch('https://fastapi.phoneme.in/ping-status', {
+          const pingResponse = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

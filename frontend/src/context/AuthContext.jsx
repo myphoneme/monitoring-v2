@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
       return null;
     }
     try {
-      const res = await fetch('http://127.0.0.1:8000/users/me', {
+      const res = await fetch('http://10.0.5.22:8000/users/me', { // <-- use your backend IP
         headers: {
           'accept': 'application/json',
           'Authorization': `Bearer ${accessToken}`
@@ -67,6 +67,7 @@ export function AuthProvider({ children }) {
       });
       if (!res.ok) throw new Error('Failed to load user');
       const data = await res.json();
+      console.log('Fetched user:', data);
       setUser(data);
       return data;
     } catch (e) {

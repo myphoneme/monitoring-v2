@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './LoginModal.module.css';
 import { useAuth } from '../../context/AuthContext';
 
-const TOKEN_URL = 'http://127.0.0.1:8000/auth/login';
+const TOKEN_URL = 'http://10.0.5.22:8000/auth/login';
 
 const LoginModal = () => {
   const { isLoginOpen, setIsLoginOpen, saveTokens } = useAuth();
