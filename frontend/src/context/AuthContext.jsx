@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
+import { config } from '../config';
 
 const AuthContext = createContext(null);
 
@@ -59,7 +60,7 @@ export function AuthProvider({ children }) {
       return null;
     }
     try {
-      const res = await fetch('http://10.0.5.22:8000/users/me', { // <-- use your backend IP
+      const res = await fetch(`${config.apiBaseUrl}/users/me`, {
         headers: {
           'accept': 'application/json',
           'Authorization': `Bearer ${accessToken}`

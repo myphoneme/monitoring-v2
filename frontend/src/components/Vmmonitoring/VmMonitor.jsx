@@ -4,7 +4,8 @@ import MonitoringGrid from './MonitoringGrid';
 import VMMaster from './VMMaster';
 import VMStatus from './VMStatus';
 import PingStatus from './UnreachableVMs';
-import { fetchVMData } from '../../services/api';
+import LogViewer from './LogViewer';
+import { fetchVMData, checkPingStatus } from '../../services/api';
 import styles from '../../styles/App.module.css';
 
 const VmMonitor = () => {
@@ -126,35 +127,18 @@ const VmMonitor = () => {
   const loadPingStatusData = async () => {
     const { fetchVMMasterData } = await import('../../services/api');
     const masterData = await fetchVMMasterData();
-    
+
     // Check ping status for each VM
     const vmDataWithPing = await Promise.all(
       masterData.map(async (vm) => {
         try {
-          const pingResponse = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ ip: vm.ip }),
-          });
-          
-          if (pingResponse.ok) {
-            const pingResult = await pingResponse.json();
-            return {
-              ...vm,
-              pingStatus: pingResult.reachable,
-              pingChecked: true,
-              pingError: null
-            };
-          } else {
-            return {
-              ...vm,
-              pingStatus: false,
-              pingChecked: false,
-              pingError: 'Failed to check ping'
-            };
-          }
+          const pingResult = await checkPingStatus(vm.ip);
+          return {
+            ...vm,
+            pingStatus: pingResult.reachable,
+            pingChecked: true,
+            pingError: null
+          };
         } catch (error) {
           return {
             ...vm,
@@ -297,7 +281,7 @@ const VmMonitor = () => {
     switch (activeTab) {
       case 'dashboard':
         return (
-          <MonitoringGrid 
+          <MonitoringGrid
             dashboardData={dashboardData}
             vmStatusData={vmStatusData}
             onRefresh={refreshAllData}
@@ -307,21 +291,23 @@ const VmMonitor = () => {
         return <VMMaster />;
       case 'vm-status':
         return (
-          <VMStatus 
+          <VMStatus
             vmStatusData={vmStatusData}
             onRefresh={refreshVMStatusData}
           />
         );
       case 'unreachable-vms':
         return (
-          <PingStatus 
+          <PingStatus
             pingStatusData={pingStatusData}
             onRefresh={refreshPingStatusData}
           />
         );
+      case 'log-viewer':
+        return <LogViewer />;
       default:
         return (
-          <MonitoringGrid 
+          <MonitoringGrid
             dashboardData={dashboardData}
             vmStatusData={vmStatusData}
             onRefresh={refreshAllData}

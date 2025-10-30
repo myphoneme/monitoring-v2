@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, RefreshCw, AlertCircle, CheckCircle, XCircle, Clock, ChevronUp, FolderOpen, Play, Loader, Filter } from 'lucide-react';
 import ReactPaginate from 'react-paginate';
-import { fetchVMMasterData } from '../../services/api';
+import api, { fetchVMMasterData } from '../../services/api';
 import styles from '../../styles/UnreachableVMs.module.css';
 
 const PingStatus = () => {
@@ -82,36 +82,20 @@ const PingStatus = () => {
       const vmDataWithPing = await Promise.all(
         masterData.map(async (vm) => {
           try {
-            const pingResponse = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ ip: vm.ip }),
-            });
-            
-            if (pingResponse.ok) {
-              const pingResult = await pingResponse.json();
-              return {
-                ...vm,
-                pingStatus: pingResult.reachable,
-                pingChecked: true,
-                pingError: null
-              };
-            } else {
-              return {
-                ...vm,
-                pingStatus: false,
-                pingChecked: false,
-                pingError: 'Failed to check ping'
-              };
-            }
+            const pingResponse = await api.post('/monitor/ping_status', { ip: vm.ip });
+
+            return {
+              ...vm,
+              pingStatus: pingResponse.data.reachable,
+              pingChecked: true,
+              pingError: null
+            };
           } catch (error) {
             return {
               ...vm,
               pingStatus: false,
               pingChecked: false,
-              pingError: error.message
+              pingError: error.message || 'Failed to check ping'
             };
           }
         })
@@ -145,36 +129,20 @@ const PingStatus = () => {
       const vmDataWithPing = await Promise.all(
         masterData.map(async (vm) => {
           try {
-            const pingResponse = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ ip: vm.ip }),
-            });
-            
-            if (pingResponse.ok) {
-              const pingResult = await pingResponse.json();
-              return {
-                ...vm,
-                pingStatus: pingResult.reachable,
-                pingChecked: true,
-                pingError: null
-              };
-            } else {
-              return {
-                ...vm,
-                pingStatus: false,
-                pingChecked: false,
-                pingError: 'Failed to check ping'
-              };
-            }
+            const pingResponse = await api.post('/monitor/ping_status', { ip: vm.ip });
+
+            return {
+              ...vm,
+              pingStatus: pingResponse.data.reachable,
+              pingChecked: true,
+              pingError: null
+            };
           } catch (error) {
             return {
               ...vm,
               pingStatus: false,
               pingChecked: false,
-              pingError: error.message
+              pingError: error.message || 'Failed to check ping'
             };
           }
         })
@@ -197,38 +165,23 @@ const PingStatus = () => {
 
   const checkManualIP = async () => {
     if (!manualIp.trim()) return;
-    
+
     try {
       setManualChecking(true);
       setManualResult(null);
-      
-      const response = await fetch('http://10.0.5.22:8000/monitor/ping_status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ip: manualIp.trim() }),
+
+      const response = await api.post('/monitor/ping_status', { ip: manualIp.trim() });
+
+      setManualResult({
+        ip: response.data.ip,
+        reachable: response.data.reachable,
+        error: null
       });
-      
-      if (response.ok) {
-        const result = await response.json();
-        setManualResult({
-          ip: result.ip,
-          reachable: result.reachable,
-          error: null
-        });
-      } else {
-        setManualResult({
-          ip: manualIp.trim(),
-          reachable: false,
-          error: 'Failed to check ping status'
-        });
-      }
     } catch (error) {
       setManualResult({
         ip: manualIp.trim(),
         reachable: false,
-        error: error.message
+        error: error.message || 'Failed to check ping status'
       });
     } finally {
       setManualChecking(false);

@@ -559,6 +559,22 @@
   letter-spacing: 0.5px;
 }
 
+.asterisk {
+  color: #dc2626;
+  font-size: 20px;
+  font-weight: 900;
+  margin-left: 2px;
+}
+
+.mandatoryText {
+  font-size: 13px;
+  font-weight: 600;
+  color: #dc2626;
+  text-align: left;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
 .formGroup input,
 .formGroup textarea {
   padding: 10px;
@@ -891,6 +907,14 @@
 
 :global(.dark) .formGroup label {
   color: #cbd5e1;
+}
+
+:global(.dark) .asterisk {
+  color: #ff6b6b;
+}
+
+:global(.dark) .mandatoryText {
+  color: #ff6b6b;
 }
 
 :global(.dark) .formGroup input,

@@ -310,7 +310,7 @@ const VMMaster = () => {
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
-                  <label>VM Name *</label>
+                  <label>VM Name <span className={styles.asterisk}>*</span></label>
                   <input
                     type="text"
                     name="vm_name"
@@ -322,7 +322,7 @@ const VMMaster = () => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>IP Address *</label>
+                  <label>IP Address <span className={styles.asterisk}>*</span></label>
                   <input
                     type="text"
                     name="ip"
@@ -398,6 +398,10 @@ const VMMaster = () => {
                     placeholder="Enter any remarks or notes"
                   />
                 </div>
+              </div>
+
+              <div className={styles.mandatoryText}>
+                All fields marked with <span className={styles.asterisk}>*</span> are mandatory
               </div>
 
               <div className={styles.formActions}>

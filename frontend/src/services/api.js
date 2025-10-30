@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { config } from '../config';
 
 // Axios instance with auth header injection
-const api = axios.create({ baseURL: 'http://10.0.5.22:8000' });
+const api = axios.create({ baseURL: config.apiBaseUrl });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
@@ -132,6 +133,16 @@ export const fetchRealtimePingStatus = async () => {
   }
 };
 
+export const checkPingStatus = async (ip) => {
+  try {
+    const response = await api.post('/monitor/ping_status', { ip });
+    return response.data;
+  } catch (error) {
+    console.error('Error checking ping status:', error);
+    throw error;
+  }
+};
+
 // ---- Users ----
 export const createUser = async (user) => {
   // Guard on client: enforce admin role
@@ -145,6 +156,40 @@ export const createUser = async (user) => {
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+// ---- Log Management ----
+export const uploadLog = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post('/upload', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading log:', error);
+    throw error;
+  }
+};
+
+export const editLog = async (logId, logData) => {
+  try {
+    const response = await api.put(`/logs/${logId}`, logData);
+    return response.data;
+  } catch (error) {
+    console.error('Error editing log:', error);
+    throw error;
+  }
+};
+
+export const deleteLog = async (logId) => {
+  try {
+    const response = await api.delete(`/logs/${logId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting log:', error);
     throw error;
   }
 };

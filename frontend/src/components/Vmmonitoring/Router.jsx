@@ -3,19 +3,20 @@ import MonitoringGrid from './MonitoringGrid';
 import VMMaster from './VMMaster';
 import VMStatus from './VMStatus';
 import PingStatus from './UnreachableVMs';
+import LogViewer from './LogViewer';
 
-const Router = ({ 
-  activeTab, 
-  dashboardData, 
-  vmStatusData, 
-  onRefreshDashboard, 
-  onRefreshVMStatus 
+const Router = ({
+  activeTab,
+  dashboardData,
+  vmStatusData,
+  onRefreshDashboard,
+  onRefreshVMStatus
 }) => {
   const renderActiveComponent = () => {
     switch (activeTab) {
       case 'dashboard':
         return (
-          <MonitoringGrid 
+          <MonitoringGrid
             dashboardData={dashboardData}
             vmStatusData={vmStatusData}
             onRefresh={onRefreshDashboard}
@@ -25,16 +26,18 @@ const Router = ({
         return <VMMaster />;
       case 'vm-status':
         return (
-          <VMStatus 
+          <VMStatus
             vmStatusData={vmStatusData}
             onRefresh={onRefreshVMStatus}
           />
         );
       case 'unreachable-vms':
         return <PingStatus />;
+      case 'log-viewer':
+        return <LogViewer />;
       default:
         return (
-          <MonitoringGrid 
+          <MonitoringGrid
             dashboardData={dashboardData}
             vmStatusData={vmStatusData}
             onRefresh={onRefreshDashboard}

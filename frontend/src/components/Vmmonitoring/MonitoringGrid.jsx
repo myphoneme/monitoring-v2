@@ -46,6 +46,10 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const [projectFilter, setProjectFilter] = useState('all');
   const [availableProjects, setAvailableProjects] = useState([]);
   const [vmMasterData, setVmMasterData] = useState([]);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Real-time status state
   const [realtimeStatus, setRealtimeStatus] = useState({});
@@ -322,6 +326,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
     }
     
     setGridData(finalGrouped);
+    setCurrentPage(1);
   };
 
   const calculateStats = () => {
@@ -762,7 +767,9 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
 
           {/* Data Rows */}
           <div className={styles.gridBody}>
-            {Object.entries(gridData).map(([vmKey, vmData]) => {
+            {Object.entries(gridData)
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map(([vmKey, vmData]) => {
               const severity = getVMSeverity(vmData);
               return (
                 <div key={vmKey} className={styles.gridRow}>
@@ -807,6 +814,65 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
           </div>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {Object.keys(gridData).length > 0 && (
+        <div className={styles.paginationContainer}>
+          <div className={styles.paginationInfo}>
+            Showing {Math.min((currentPage - 1) * itemsPerPage + 1, Object.keys(gridData).length)} to {Math.min(currentPage * itemsPerPage, Object.keys(gridData).length)} of {Object.keys(gridData).length} VMs
+          </div>
+
+          <div className={styles.paginationControls}>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={styles.paginationButton}
+            >
+              Previous
+            </button>
+
+            <div className={styles.pageNumbers}>
+              {Array.from(
+                { length: Math.ceil(Object.keys(gridData).length / itemsPerPage) },
+                (_, i) => i + 1
+              ).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ''}`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(Object.keys(gridData).length / itemsPerPage)))}
+              disabled={currentPage === Math.ceil(Object.keys(gridData).length / itemsPerPage)}
+              className={styles.paginationButton}
+            >
+              Next
+            </button>
+          </div>
+
+          <div className={styles.itemsPerPageSelector}>
+            <label>Items per page:</label>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className={styles.itemsPerPageSelect}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal */}
       {selectedModal && (

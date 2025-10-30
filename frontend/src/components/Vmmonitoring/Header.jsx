@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Monitor, Grid3X3, Database, TrendingUp, XCircle, ArrowLeft } from 'lucide-react'; // Added ArrowLeft
+import { Monitor, Grid3X3, Database, TrendingUp, XCircle, ArrowLeft, FileText } from 'lucide-react';
 import styles from '../../styles/Header.module.css';
 
 const Header = ({ activeTab, setActiveTab }) => {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const navigationItems = [
     {
@@ -30,6 +30,12 @@ const Header = ({ activeTab, setActiveTab }) => {
       label: 'Ping Status',
       icon: XCircle,
       description: 'VM ping status monitoring'
+    },
+    {
+      id: 'log-viewer',
+      label: 'Log Viewer',
+      icon: FileText,
+      description: 'Upload and manage system logs'
     }
   ];
 
