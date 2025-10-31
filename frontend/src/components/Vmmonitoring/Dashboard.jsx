@@ -184,8 +184,8 @@ const Dashboard = ({ dashboardData, onRefresh }) => {
             />
           </div>
           
-          <button 
-            onClick={onRefresh} 
+          <button
+            onClick={() => onRefresh(null)}
             className={styles.refreshButton}
             disabled={loading}
           >

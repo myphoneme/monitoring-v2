@@ -24,14 +24,15 @@ import {
   FolderOpen
 } from 'lucide-react';
 import { fetchVMMasterData, fetchRealtimePingStatus } from '../../services/api';
+import { getLast30Days, formatDateForDisplay, formatDateForAPI, getTodayFormatted } from '../../utils/dateUtils';
 import styles from '../../styles/MonitoringGrid.module.css';
 
 const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const { vms, loading } = dashboardData;
   const { allStatusData } = vmStatusData;
   
-  const [selectedDate, setSelectedDate] = useState('');
-  const [availableDates, setAvailableDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(getTodayFormatted());
+  const [availableDates, setAvailableDates] = useState(getLast30Days());
   const [gridData, setGridData] = useState({});
   const [selectedModal, setSelectedModal] = useState(null);
   const [timeMode, setTimeMode] = useState('AM');
@@ -46,14 +47,14 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const [projectFilter, setProjectFilter] = useState('all');
   const [availableProjects, setAvailableProjects] = useState([]);
   const [vmMasterData, setVmMasterData] = useState([]);
-
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Real-time status state
   const [realtimeStatus, setRealtimeStatus] = useState({});
   const [realtimeLoading, setRealtimeLoading] = useState(false);
+
+    // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Load VM master data on component mount
   useEffect(() => {
@@ -138,22 +139,14 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   };
 
   useEffect(() => {
-    if (allStatusData.length > 0) {
-      const dates = [...new Set(allStatusData.map(item => new Date(item.current_time).toDateString()))];
-      const sortedDates = dates.sort((a, b) => new Date(b) - new Date(a));
-      setAvailableDates(sortedDates);
-      
+    if (allStatusData.length > 0 || vmMasterData.length > 0) {
       // Get unique projects
       const statusProjects = allStatusData.map(item => item.project).filter(p => p && p !== 'N/A');
       const masterProjects = vmMasterData.map(vm => vm.project_name).filter(p => p && p !== 'N/A');
       const projects = [...new Set([...statusProjects, ...masterProjects])];
       setAvailableProjects(projects.sort());
-      
-      if (!selectedDate && sortedDates.length > 0) {
-        setSelectedDate(sortedDates[0]);
-      }
     }
-  }, [allStatusData, vmMasterData, selectedDate]);
+  }, [allStatusData, vmMasterData]);
 
   useEffect(() => {
     if (selectedDate && (allStatusData.length > 0 || vms.length > 0)) {
@@ -229,9 +222,11 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
     });
     
     // Filter status data by date first
-    let filtered = allStatusData.filter(item => 
-      new Date(item.current_time).toDateString() === selectedDate
-    );
+    let filtered = allStatusData.filter(item => {
+      const itemDate = new Date(item.current_time);
+      const itemDateStr = formatDateForAPI(itemDate);
+      return itemDateStr === selectedDate;
+    });
 
     // Apply status change filter to status data only
     if (statusFilter !== 'all') {
@@ -326,7 +321,6 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
     }
     
     setGridData(finalGrouped);
-    setCurrentPage(1);
   };
 
   const calculateStats = () => {
@@ -573,12 +567,21 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
               <Calendar className={styles.controlIcon} />
               <select
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
+                onChange={(e) => {
+                  const newDate = e.target.value;
+                  setSelectedDate(newDate);
+                  onRefresh(newDate);
+                }}
                 className={styles.dateSelect}
               >
-                {availableDates.map(date => (
-                  <option key={date} value={date}>{new Date(date).toLocaleDateString()}</option>
-                ))}
+                {availableDates.map(date => {
+                  const dateValue = formatDateForAPI(date);
+                  return (
+                    <option key={dateValue} value={dateValue}>
+                      {formatDateForDisplay(date)}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -768,8 +771,8 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
           {/* Data Rows */}
           <div className={styles.gridBody}>
             {Object.entries(gridData)
-              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map(([vmKey, vmData]) => {
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map(([vmKey, vmData]) => {
               const severity = getVMSeverity(vmData);
               return (
                 <div key={vmKey} className={styles.gridRow}>
@@ -815,7 +818,8 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
         </div>
       </div>
 
-      {/* Pagination Controls */}
+
+{/* Pagination Controls */}
       {Object.keys(gridData).length > 0 && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
@@ -874,6 +878,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
         </div>
       )}
 
+      
       {/* Detail Modal */}
       {selectedModal && (
         <div className={styles.modalOverlay} onClick={() => setSelectedModal(null)}>

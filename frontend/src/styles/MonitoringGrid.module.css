@@ -1149,94 +1149,33 @@
   color: #cbd5e1;
 }
 
-:global(.dark) .paginationContainer {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  border: 1px solid #475569;
-  border-top: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-:global(.dark) .paginationInfo {
-  color: #cbd5e1;
-}
-
-:global(.dark) .paginationButton {
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-  border: 2px solid #475569;
-  color: #f1f5f9;
-}
-
-:global(.dark) .paginationButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
-  border-color: #ff6b35;
-  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.2);
-}
-
-:global(.dark) .paginationButton:disabled {
-  background: #334155;
-}
-
-:global(.dark) .pageNumber {
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-  border: 2px solid #475569;
-  color: #f1f5f9;
-}
-
-:global(.dark) .pageNumber:hover {
-  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
-  border-color: #ff6b35;
-  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.2);
-}
-
-:global(.dark) .pageNumber.activePage {
-  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
-  border-color: #ff6b35;
-  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.3);
-}
-
-:global(.dark) .itemsPerPageSelector {
-  color: #cbd5e1;
-}
-
-:global(.dark) .itemsPerPageSelect {
-  border: 2px solid #475569;
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-  color: #f1f5f9;
-}
-
-:global(.dark) .itemsPerPageSelect:focus {
-  border-color: #ff8f65;
-  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
-  background: #1e293b;
-}
-
 @media (max-width: 768px) {
   .gridContainer {
     overflow-x: auto;
   }
-
+  
   .gridTable {
     min-width: 800px;
   }
-
+  
   .statsContainer {
     flex-direction: column;
     gap: 8px;
   }
-
+  
   .statCard {
     min-width: auto;
   }
-
+  
   .primaryControls {
     flex-direction: column;
     gap: 8px;
   }
-
+  
   .modalContent {
     padding: 16px;
   }
-
+  
   .infoGrid,
   .metricsGrid {
     grid-template-columns: 1fr;
@@ -1263,37 +1202,6 @@
   .legendItem {
     font-size: 10px;
     padding: 4px 8px;
-  }
-
-  .paginationContainer {
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px 16px;
-  }
-
-  .paginationInfo,
-  .itemsPerPageSelector {
-    text-align: center;
-  }
-
-  .paginationControls {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .pageNumbers {
-    gap: 2px;
-  }
-
-  .pageNumber {
-    padding: 4px 6px;
-    min-width: 28px;
-    font-size: 10px;
-  }
-
-  .paginationButton {
-    padding: 4px 8px;
-    font-size: 10px;
   }
 }
 

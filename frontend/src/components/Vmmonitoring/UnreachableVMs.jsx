@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, RefreshCw, AlertCircle, CheckCircle, XCircle, Clock, ChevronUp, FolderOpen, Play, Loader, Filter } from 'lucide-react';
 import ReactPaginate from 'react-paginate';
-import api, { fetchVMMasterData } from '../../services/api';
+import { fetchVMMasterData, checkPingStatus } from '../../services/api';
 import styles from '../../styles/UnreachableVMs.module.css';
 
 const PingStatus = () => {
@@ -82,11 +82,10 @@ const PingStatus = () => {
       const vmDataWithPing = await Promise.all(
         masterData.map(async (vm) => {
           try {
-            const pingResponse = await api.post('/monitor/ping_status', { ip: vm.ip });
-
+            const pingResult = await checkPingStatus(vm.ip);
             return {
               ...vm,
-              pingStatus: pingResponse.data.reachable,
+              pingStatus: pingResult.reachable,
               pingChecked: true,
               pingError: null
             };
@@ -95,7 +94,7 @@ const PingStatus = () => {
               ...vm,
               pingStatus: false,
               pingChecked: false,
-              pingError: error.message || 'Failed to check ping'
+              pingError: error.message
             };
           }
         })
@@ -129,11 +128,10 @@ const PingStatus = () => {
       const vmDataWithPing = await Promise.all(
         masterData.map(async (vm) => {
           try {
-            const pingResponse = await api.post('/monitor/ping_status', { ip: vm.ip });
-
+            const pingResult = await checkPingStatus(vm.ip);
             return {
               ...vm,
-              pingStatus: pingResponse.data.reachable,
+              pingStatus: pingResult.reachable,
               pingChecked: true,
               pingError: null
             };
@@ -142,7 +140,7 @@ const PingStatus = () => {
               ...vm,
               pingStatus: false,
               pingChecked: false,
-              pingError: error.message || 'Failed to check ping'
+              pingError: error.message
             };
           }
         })
@@ -170,18 +168,17 @@ const PingStatus = () => {
       setManualChecking(true);
       setManualResult(null);
 
-      const response = await api.post('/monitor/ping_status', { ip: manualIp.trim() });
-
+      const result = await checkPingStatus(manualIp.trim());
       setManualResult({
-        ip: response.data.ip,
-        reachable: response.data.reachable,
+        ip: result.ip,
+        reachable: result.reachable,
         error: null
       });
     } catch (error) {
       setManualResult({
         ip: manualIp.trim(),
         reachable: false,
-        error: error.message || 'Failed to check ping status'
+        error: error.message
       });
     } finally {
       setManualChecking(false);
