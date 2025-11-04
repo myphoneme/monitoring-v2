@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { config } from '../config';
-import { attemptTokenRefresh, isTokenValid } from './tokenRefresh';
+import { attemptTokenRefresh, isTokenValid, shouldRefreshToken } from './tokenRefresh';
 
 const api = axios.create({ baseURL: config.apiBaseUrl });
 
@@ -16,8 +16,37 @@ const addRefreshSubscriber = (cb) => {
   refreshSubscribers.push(cb);
 };
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+api.interceptors.request.use(async (config) => {
+  let token = localStorage.getItem('access_token');
+
+  // Proactive refresh before request if token is near expiry
+  try {
+    if (token && shouldRefreshToken(token)) {
+      if (isRefreshing) {
+        // Wait until current refresh completes
+        token = await new Promise((resolve) => {
+          addRefreshSubscriber((newToken) => resolve(newToken));
+        });
+      } else {
+        isRefreshing = true;
+        try {
+          const refreshToken = localStorage.getItem('refresh_token');
+          if (!refreshToken) throw new Error('No refresh token available');
+          const newTokens = await attemptTokenRefresh(refreshToken);
+          localStorage.setItem('access_token', newTokens.access_token);
+          localStorage.setItem('refresh_token', newTokens.refresh_token);
+          token = newTokens.access_token;
+          api.defaults.headers.common.Authorization = `Bearer ${token}`;
+          onRefreshed(token);
+        } finally {
+          isRefreshing = false;
+        }
+      }
+    }
+  } catch (e) {
+    // If proactive refresh fails, let the response interceptor handle 401
+  }
+
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;

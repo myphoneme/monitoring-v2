@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import { config } from '../config';
+import { attemptTokenRefresh, shouldRefreshToken, TOKEN_REFRESH_CONFIG } from '../services/tokenRefresh';
 
 const AuthContext = createContext(null);
 
@@ -29,6 +30,7 @@ export function AuthProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem(REFRESH_TOKEN_KEY) || '');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [sessionExpiredReason, setSessionExpiredReason] = useState(null);
 
   useEffect(() => {
     if (accessToken) localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -51,6 +53,7 @@ export function AuthProvider({ children }) {
   const saveTokens = useCallback((tokens) => {
     setAccessToken(tokens?.access_token || '');
     setRefreshToken(tokens?.refresh_token || '');
+    setSessionExpiredReason(null);
   }, []);
 
   // Fetch current user info from backend
@@ -81,6 +84,42 @@ export function AuthProvider({ children }) {
     fetchMe();
   }, [fetchMe]);
 
+  // Listen for 401s/sign-in requirements dispatched from the API layer
+  useEffect(() => {
+    function onLoginRequired() {
+      // Decide a best-effort reason
+      const hasRefresh = !!(localStorage.getItem(REFRESH_TOKEN_KEY));
+      const hasAccess = !!(localStorage.getItem(ACCESS_TOKEN_KEY));
+      let reason = 'refresh_error';
+      if (!hasRefresh) reason = 'refresh_token_expired';
+      else if (!hasAccess) reason = 'refresh_error';
+      setSessionExpiredReason(reason);
+      setIsLoginOpen(true);
+    }
+    window.addEventListener('auth:login-required', onLoginRequired);
+    return () => window.removeEventListener('auth:login-required', onLoginRequired);
+  }, []);
+
+  // Proactive token refresh loop (checks every CHECK_EXPIRY_INTERVAL_MS)
+  useEffect(() => {
+    if (!refreshToken) return;
+    const interval = setInterval(async () => {
+      try {
+        const currentAccess = localStorage.getItem(ACCESS_TOKEN_KEY) || accessToken;
+        if (currentAccess && shouldRefreshToken(currentAccess)) {
+          const tokens = await attemptTokenRefresh(refreshToken);
+          if (tokens?.access_token) setAccessToken(tokens.access_token);
+          if (tokens?.refresh_token) setRefreshToken(tokens.refresh_token);
+        }
+      } catch (e) {
+        // Refresh failed; force re-login
+        setSessionExpiredReason('refresh_error');
+        setIsLoginOpen(true);
+      }
+    }, TOKEN_REFRESH_CONFIG.CHECK_EXPIRY_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [accessToken, refreshToken]);
+
   const value = useMemo(() => ({
     accessToken,
     refreshToken,
@@ -91,10 +130,13 @@ export function AuthProvider({ children }) {
     saveTokens,
     user,
     refreshUser: fetchMe,
+    sessionExpiredReason,
+    setSessionExpiredReason,
     clear: () => {
       setAccessToken('');
       setRefreshToken('');
       setUser(null);
+      setSessionExpiredReason(null);
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
     }
