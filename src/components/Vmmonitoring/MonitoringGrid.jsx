@@ -568,9 +568,9 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
               <select
                 value={selectedDate}
                 onChange={(e) => {
-                  const newDate = e.target.value;
-                  setSelectedDate(newDate);
-                  onRefresh(newDate);
+                  const newDateString = e.target.value;
+                  setSelectedDate(newDateString);
+                  onRefresh(newDateString);
                 }}
                 className={styles.dateSelect}
               >
@@ -602,8 +602,8 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
               </button>
             </div>
 
-            <button 
-              onClick={onRefresh} 
+            <button
+              onClick={() => onRefresh(selectedDate)}
               className={styles.refreshButton}
               disabled={loading}
             >

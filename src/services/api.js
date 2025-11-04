@@ -126,7 +126,19 @@ export function isAdminUser() {
 
 export const fetchVMData = async (dateFilter = null) => {
   try {
-    const url = dateFilter ? `/status/?date_filter=${dateFilter}` : '/status';
+    let url = '/status';
+    if (dateFilter) {
+      let dateString = String(dateFilter).trim();
+      if (dateFilter instanceof Date) {
+        dateString = dateFilter.toISOString().split('T')[0];
+      } else if (typeof dateFilter === 'object') {
+        console.warn('Invalid dateFilter object received:', dateFilter);
+        dateString = null;
+      }
+      if (dateString && dateString !== 'null' && dateString !== '[object Object]') {
+        url = `/status/?date_filter=${encodeURIComponent(dateString)}`;
+      }
+    }
     const response = await api.get(url);
     return response.data;
   } catch (error) {
