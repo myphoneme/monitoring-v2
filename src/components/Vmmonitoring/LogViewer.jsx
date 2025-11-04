@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Search, Edit, Trash2, X, AlertCircle, CheckCircle, XCircle, FileText, Download, Calendar } from 'lucide-react';
+import { Upload, Search, Edit, Trash2, X, AlertCircle, CheckCircle, XCircle, FileText, Download, Calendar, RefreshCw } from 'lucide-react';
 import ReactPaginate from 'react-paginate';
-import { uploadLog } from '../../services/api';
+import { uploadLog, getLogsList, downloadLog } from '../../services/api';
 import styles from '../../styles/LogViewer.module.css';
 
 const LogViewer = () => {
@@ -12,21 +12,36 @@ const LogViewer = () => {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(10);
   const [flashMessage, setFlashMessage] = useState(null);
+  const [logsPath, setLogsPath] = useState('');
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
 
   useEffect(() => {
     const filtered = logs.filter(log =>
-      log.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.file_path.toLowerCase().includes(searchTerm.toLowerCase())
+      log.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredLogs(filtered);
     setCurrentPage(0);
   }, [searchTerm, logs]);
+
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      const response = await getLogsList();
+      setLogs(response.files || []);
+    } catch (error) {
+      console.error('Failed to fetch logs:', error);
+      showFlashMessage('Failed to load logs', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showFlashMessage = (message, type = 'success') => {
     setFlashMessage({ message, type });
@@ -67,21 +82,10 @@ const LogViewer = () => {
 
     try {
       setUploading(true);
-      const response = await uploadLog(selectedFile);
-
-      console.log('Upload successful:', response);
-
-      const newLog = {
-        id: Date.now(),
-        file_name: response.file_name,
-        file_path: response.file_path,
-        file_url: response.file_url,
-        uploaded_at: new Date().toISOString()
-      };
-
-      setLogs(prev => [newLog, ...prev]);
+      await uploadLog(selectedFile);
       setSelectedFile(null);
-      showFlashMessage(`Log "${response.file_name}" uploaded successfully!`);
+      showFlashMessage(`Log "${selectedFile.name}" uploaded successfully!`);
+      fetchLogs();
     } catch (error) {
       console.error('Upload error:', error);
       showFlashMessage('Failed to upload log file', 'error');
@@ -90,14 +94,27 @@ const LogViewer = () => {
     }
   };
 
-  const handleEdit = (log) => {
-    setSelectedLog(log);
-    setShowEditModal(true);
+  const handleDownload = async (filename) => {
+    try {
+      const blob = await downloadLog(filename);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      showFlashMessage(`Downloaded "${filename}"!`);
+    } catch (error) {
+      console.error('Download error:', error);
+      showFlashMessage('Failed to download log file', 'error');
+    }
   };
 
-  const handleDelete = (log) => {
-    setSelectedLog(log);
-    setShowDeleteModal(true);
+  const handleRefresh = async () => {
+    await fetchLogs();
+    showFlashMessage('Logs refreshed!');
   };
 
   const handlePageClick = (event) => {
@@ -154,48 +171,51 @@ const LogViewer = () => {
             {!selectedFile ? (
               <>
                 <Upload className={styles.uploadIcon} />
-                <p className={styles.dropText}>Drag and drop your log file here</p>
-                <p className={styles.dropSubtext}>or</p>
+                <div className={styles.dropTextContainer}>
+                  <p className={styles.dropText}>Drag & drop log file here</p>
+                  <p className={styles.dropSubtext}>or browse to select (.log, .txt)</p>
+                </div>
                 <label htmlFor="fileInput" className={styles.browseButton}>
-                  Browse Files
+                  Browse
                 </label>
-                <p className={styles.dropHint}>Supported formats: .log, .txt</p>
               </>
             ) : (
               <>
                 <FileText className={styles.fileIcon} />
-                <p className={styles.fileName}>{selectedFile.name}</p>
-                <p className={styles.fileSize}>
-                  {(selectedFile.size / 1024).toFixed(2)} KB
-                </p>
+                <div className={styles.fileNameContainer}>
+                  <p className={styles.fileName}>{selectedFile.name}</p>
+                  <p className={styles.fileSize}>
+                    {(selectedFile.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
                 <button
                   className={styles.removeButton}
                   onClick={() => setSelectedFile(null)}
                 >
-                  <X size={16} /> Remove
+                  <X size={12} /> Remove
                 </button>
               </>
             )}
           </div>
-
-          <button
-            className={styles.uploadButton}
-            onClick={handleUpload}
-            disabled={!selectedFile || uploading}
-          >
-            {uploading ? (
-              <>
-                <div className={styles.spinner}></div>
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className={styles.buttonIcon} />
-                Upload Log
-              </>
-            )}
-          </button>
         </div>
+
+        <button
+          className={styles.uploadButton}
+          onClick={handleUpload}
+          disabled={!selectedFile || uploading}
+        >
+          {uploading ? (
+            <>
+              <div className={styles.spinner}></div>
+              Uploading...
+            </>
+          ) : (
+            <>
+              <Upload className={styles.buttonIcon} />
+              Upload
+            </>
+          )}
+        </button>
       </div>
 
       <div className={styles.tableSection}>
@@ -204,7 +224,7 @@ const LogViewer = () => {
             <Search className={styles.searchIcon} />
             <input
               type="text"
-              placeholder="Search logs..."
+              placeholder="Search logs by filename..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={styles.searchInput}
@@ -214,6 +234,13 @@ const LogViewer = () => {
             <span className={styles.statsText}>
               Total Logs: <strong>{logs.length}</strong>
             </span>
+            <button
+              onClick={handleRefresh}
+              className={styles.refreshButton}
+              title="Refresh logs list"
+            >
+              <RefreshCw size={18} />
+            </button>
           </div>
         </div>
 
@@ -235,45 +262,30 @@ const LogViewer = () => {
                 <thead>
                   <tr>
                     <th>File Name</th>
-                    <th>File Path</th>
-                    <th>File URL</th>
-                    <th>Upload Date</th>
+                    <th>Size (KB)</th>
+                    <th>Modified Date</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentPageData.map(log => (
-                    <tr key={log.id} className={styles.tableRow}>
+                  {currentPageData.map((log, idx) => (
+                    <tr key={idx} className={styles.tableRow}>
                       <td className={styles.fileName}>
                         <FileText className={styles.tableFileIcon} />
-                        {log.file_name}
+                        {log.name}
                       </td>
-                      <td className={styles.filePath}>{log.file_path}</td>
-                      <td className={styles.fileUrl}>
-                        <a href={log.file_url} target="_blank" rel="noopener noreferrer" className={styles.urlLink}>
-                          <Download size={14} /> View
-                        </a>
-                      </td>
+                      <td className={styles.fileSize}>{log.size_kb.toFixed(2)}</td>
                       <td>
                         <Calendar className={styles.dateIcon} />
-                        {new Date(log.uploaded_at).toLocaleString()}
+                        {log.modified}
                       </td>
                       <td className={styles.actions}>
                         <button
-                          onClick={() => handleEdit(log)}
-                          className={`${styles.actionButton} ${styles.edit} ${styles.disabled}`}
-                          title="Feature not available - API not implemented"
-                          disabled
+                          onClick={() => handleDownload(log.name)}
+                          className={`${styles.actionButton} ${styles.download}`}
+                          title="Download log file"
                         >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(log)}
-                          className={`${styles.actionButton} ${styles.delete} ${styles.disabled}`}
-                          title="Feature not available - API not implemented"
-                          disabled
-                        >
-                          <Trash2 size={16} />
+                          <Download size={16} />
                         </button>
                       </td>
                     </tr>
@@ -306,81 +318,6 @@ const LogViewer = () => {
         )}
       </div>
 
-      {showEditModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h4>Edit Log</h4>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className={styles.closeButton}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className={styles.modalContent}>
-              <div className={styles.infoMessage}>
-                <AlertCircle className={styles.infoIcon} />
-                <div>
-                  <p className={styles.infoTitle}>Feature Coming Soon</p>
-                  <p className={styles.infoText}>
-                    The edit log functionality is currently under development.
-                    The backend API for editing logs has not been created yet.
-                  </p>
-                </div>
-              </div>
-              <div className={styles.logDetails}>
-                <p><strong>File Name:</strong> {selectedLog?.file_name}</p>
-                <p><strong>File Path:</strong> {selectedLog?.file_path}</p>
-                <p><strong>Uploaded:</strong> {new Date(selectedLog?.uploaded_at).toLocaleString()}</p>
-              </div>
-            </div>
-            <div className={styles.modalActions}>
-              <button onClick={() => setShowEditModal(false)} className={styles.closeModalButton}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showDeleteModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h4>Delete Log</h4>
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className={styles.closeButton}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className={styles.modalContent}>
-              <div className={styles.infoMessage}>
-                <AlertCircle className={styles.infoIcon} />
-                <div>
-                  <p className={styles.infoTitle}>Feature Coming Soon</p>
-                  <p className={styles.infoText}>
-                    The delete log functionality is currently under development.
-                    The backend API for deleting logs has not been created yet.
-                  </p>
-                </div>
-              </div>
-              <div className={styles.logDetails}>
-                <p><strong>File Name:</strong> {selectedLog?.file_name}</p>
-                <p><strong>File Path:</strong> {selectedLog?.file_path}</p>
-                <p><strong>Uploaded:</strong> {new Date(selectedLog?.uploaded_at).toLocaleString()}</p>
-              </div>
-            </div>
-            <div className={styles.modalActions}>
-              <button onClick={() => setShowDeleteModal(false)} className={styles.closeModalButton}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

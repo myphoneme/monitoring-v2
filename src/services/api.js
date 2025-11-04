@@ -1,8 +1,20 @@
 import axios from 'axios';
 import { config } from '../config';
+import { attemptTokenRefresh, isTokenValid } from './tokenRefresh';
 
-// Axios instance with auth header injection
 const api = axios.create({ baseURL: config.apiBaseUrl });
+
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const onRefreshed = (token) => {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (cb) => {
+  refreshSubscribers.push(cb);
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
@@ -17,11 +29,50 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (res) => res,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error?.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          addRefreshSubscriber((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        const newTokens = await attemptTokenRefresh(refreshToken);
+        localStorage.setItem('access_token', newTokens.access_token);
+        localStorage.setItem('refresh_token', newTokens.refresh_token);
+
+        api.defaults.headers.common.Authorization = `Bearer ${newTokens.access_token}`;
+        originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
+
+        onRefreshed(newTokens.access_token);
+        isRefreshing = false;
+
+        return api(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        window.dispatchEvent(new CustomEvent('auth:login-required'));
+        return Promise.reject(refreshError);
+      }
+    }
+
     if (error?.response?.status === 401) {
-      // Notify app to open login modal
       window.dispatchEvent(new CustomEvent('auth:login-required'));
     }
+
     return Promise.reject(error);
   }
 );
@@ -73,9 +124,10 @@ export function isAdminUser() {
 
 
 
-export const fetchVMData = async () => {
+export const fetchVMData = async (dateFilter = null) => {
   try {
-    const response = await api.get('/status');
+    const url = dateFilter ? `/status/?date_filter=${dateFilter}` : '/status';
+    const response = await api.get(url);
     return response.data;
   } catch (error) {
     console.error('Error fetching VM data:', error);
@@ -166,7 +218,7 @@ export const uploadLog = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await api.post('/upload', formData);
+    const response = await api.post('/logs/upload', formData);
     return response.data;
   } catch (error) {
     console.error('Error uploading log:', error);
@@ -174,24 +226,37 @@ export const uploadLog = async (file) => {
   }
 };
 
-export const editLog = async (logId, logData) => {
+export const getLogsPath = async () => {
   try {
-    const response = await api.put(`/logs/${logId}`, logData);
+    const response = await api.get('/logs/path');
     return response.data;
   } catch (error) {
-    console.error('Error editing log:', error);
+    console.error('Error fetching logs path:', error);
     throw error;
   }
 };
 
-export const deleteLog = async (logId) => {
+export const getLogsList = async () => {
   try {
-    const response = await api.delete(`/logs/${logId}`);
+    const response = await api.get('/logs/list');
     return response.data;
   } catch (error) {
-    console.error('Error deleting log:', error);
+    console.error('Error fetching logs list:', error);
     throw error;
   }
 };
+
+export const downloadLog = async (filename) => {
+  try {
+    const response = await api.get(`/logs/download/${filename}`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error downloading log:', error);
+    throw error;
+  }
+};
+
 
 export default api;

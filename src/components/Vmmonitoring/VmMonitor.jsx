@@ -6,6 +6,7 @@ import VMStatus from './VMStatus';
 import PingStatus from './UnreachableVMs';
 import LogViewer from './LogViewer';
 import { fetchVMData, checkPingStatus } from '../../services/api';
+import { getTodayFormatted } from '../../utils/dateUtils';
 import styles from '../../styles/App.module.css';
 
 const VmMonitor = () => {
@@ -41,14 +42,14 @@ const VmMonitor = () => {
     loadInitialData();
   }, []);
 
-  const loadInitialData = async () => {
+  const loadInitialData = async (dateFilter = null) => {
     const promises = [];
-    
+
     // Load Dashboard data
     if (dashboardData.initialLoad) {
       setDashboardData(prev => ({ ...prev, loading: true, error: null }));
       promises.push(
-        fetchVMData()
+        fetchVMData(dateFilter)
           .then(data => {
             const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setDashboardData(prev => ({
@@ -74,7 +75,7 @@ const VmMonitor = () => {
     if (vmStatusData.initialLoad) {
       setVmStatusData(prev => ({ ...prev, loading: true }));
       promises.push(
-        fetchVMData()
+        fetchVMData(dateFilter)
           .then(data => {
             const processedData = processStatusHistory(data);
             setVmStatusData(prev => ({
@@ -209,10 +210,10 @@ const VmMonitor = () => {
   };
 
   // Refresh functions
-  const refreshDashboardData = async () => {
+  const refreshDashboardData = async (dateFilter = null) => {
     setDashboardData(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const data = await fetchVMData();
+      const data = await fetchVMData(dateFilter);
       const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setDashboardData(prev => ({
         ...prev,
@@ -229,10 +230,10 @@ const VmMonitor = () => {
     }
   };
 
-  const refreshVMStatusData = async () => {
+  const refreshVMStatusData = async (dateFilter = null) => {
     setVmStatusData(prev => ({ ...prev, loading: true }));
     try {
-      const data = await fetchVMData();
+      const data = await fetchVMData(dateFilter);
       const processedData = processStatusHistory(data);
       setVmStatusData(prev => ({
         ...prev,
@@ -268,10 +269,10 @@ const VmMonitor = () => {
   };
 
   // Optimized refresh function that runs both refreshes concurrently
-  const refreshAllData = async () => {
+  const refreshAllData = async (dateFilter = null) => {
     await Promise.allSettled([
-      refreshDashboardData(),
-      refreshVMStatusData(),
+      refreshDashboardData(dateFilter),
+      refreshVMStatusData(dateFilter),
       refreshPingStatusData()
     ]);
   };
