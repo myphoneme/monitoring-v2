@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, X, Save, Download, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Edit, Trash2, Search, X, Save, Download, Upload, CheckCircle, AlertCircle, XCircle, FileSpreadsheet } from 'lucide-react';
 import ReactPaginate from 'react-paginate';
+import * as XLSX from 'xlsx';
 import { fetchVMMasterData, createVM, updateVM, deleteVM } from '../../services/api';
 import styles from '../../styles/VMMaster.module.css';
 
@@ -25,6 +26,13 @@ const VMMaster = () => {
     node: '',
     remarks: ''
   });
+
+  // Excel upload states
+  const fileInputRef = useRef(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadData, setUploadData] = useState([]);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
 
   useEffect(() => {
     loadVMData();
@@ -152,6 +160,163 @@ const VMMaster = () => {
     }));
   };
 
+  // Excel Upload Handlers
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    const validTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'text/csv'
+    ];
+
+    if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls|csv)$/i)) {
+      showFlashMessage('Please upload a valid Excel file (.xlsx, .xls) or CSV file', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        if (jsonData.length === 0) {
+          showFlashMessage('The uploaded file is empty', 'error');
+          return;
+        }
+
+        // Map Excel columns to VM fields (case-insensitive)
+        const mappedData = jsonData.map((row, index) => {
+          const mappedRow = {
+            rowIndex: index + 1,
+            vm_name: row['VM Name'] || row['vm_name'] || row['VM_Name'] || row['vmname'] || row['Name'] || '',
+            ip: row['IP Address'] || row['ip'] || row['IP'] || row['ip_address'] || '',
+            username: row['Username'] || row['username'] || row['User'] || row['user'] || '',
+            password: row['Password'] || row['password'] || row['Pass'] || row['pass'] || '',
+            project_name: row['Project Name'] || row['Project'] || row['project_name'] || row['project'] || '',
+            cluster: row['Cluster'] || row['cluster'] || '',
+            node: row['Node'] || row['node'] || '',
+            remarks: row['Remarks'] || row['remarks'] || row['Notes'] || row['notes'] || '',
+            isValid: true,
+            errors: []
+          };
+
+          // Validate required fields
+          if (!mappedRow.vm_name) {
+            mappedRow.isValid = false;
+            mappedRow.errors.push('VM Name is required');
+          }
+          if (!mappedRow.ip) {
+            mappedRow.isValid = false;
+            mappedRow.errors.push('IP Address is required');
+          }
+
+          // Check for duplicate IP in existing VMs
+          const existingVM = vms.find(vm => vm.ip === mappedRow.ip);
+          if (existingVM) {
+            mappedRow.isValid = false;
+            mappedRow.errors.push(`IP already exists (${existingVM.vm_name})`);
+          }
+
+          return mappedRow;
+        });
+
+        setUploadData(mappedData);
+        setShowUploadModal(true);
+      } catch (error) {
+        console.error('Error parsing Excel file:', error);
+        showFlashMessage('Error parsing file. Please check the format.', 'error');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+
+    // Reset file input
+    e.target.value = '';
+  };
+
+  const handleUploadConfirm = async () => {
+    const validData = uploadData.filter(row => row.isValid);
+
+    if (validData.length === 0) {
+      showFlashMessage('No valid VMs to upload', 'error');
+      return;
+    }
+
+    setUploadLoading(true);
+    setUploadProgress({ current: 0, total: validData.length });
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < validData.length; i++) {
+      const vmData = {
+        vm_name: validData[i].vm_name,
+        ip: validData[i].ip,
+        username: validData[i].username || '',
+        password: validData[i].password || '',
+        project_name: validData[i].project_name || '',
+        cluster: validData[i].cluster || '',
+        node: validData[i].node || '',
+        remarks: validData[i].remarks || ''
+      };
+
+      try {
+        await createVM(vmData);
+        successCount++;
+      } catch (error) {
+        console.error(`Error creating VM ${vmData.vm_name}:`, error);
+        failCount++;
+      }
+
+      setUploadProgress({ current: i + 1, total: validData.length });
+    }
+
+    setUploadLoading(false);
+    setShowUploadModal(false);
+    setUploadData([]);
+    loadVMData();
+
+    if (failCount === 0) {
+      showFlashMessage(`Successfully added ${successCount} VMs!`, 'success');
+    } else {
+      showFlashMessage(`Added ${successCount} VMs. ${failCount} failed.`, 'warning');
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    const templateData = [
+      {
+        'VM Name': 'Example-VM-1',
+        'IP Address': '192.168.1.100',
+        'Username': 'admin',
+        'Password': '',
+        'Project Name': 'Project A',
+        'Cluster': 'Cluster 1',
+        'Node': 'Node 1',
+        'Remarks': 'Sample VM'
+      }
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet(templateData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'VM Template');
+
+    // Set column widths
+    worksheet['!cols'] = [
+      { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+      { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 25 }
+    ];
+
+    XLSX.writeFile(workbook, 'VM_Upload_Template.xlsx');
+    showFlashMessage('Template downloaded successfully!');
+  };
+
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
@@ -202,6 +367,17 @@ const VMMaster = () => {
             <Download className={styles.buttonIcon} />
             Export CSV
           </button>
+          <button onClick={() => fileInputRef.current?.click()} className={styles.uploadButton}>
+            <Upload className={styles.buttonIcon} />
+            Upload Excel
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept=".xlsx,.xls,.csv"
+            style={{ display: 'none' }}
+          />
           <button onClick={handleAddNew} className={styles.addButton}>
             <Plus className={styles.buttonIcon} />
             Add VM
@@ -436,6 +612,131 @@ const VMMaster = () => {
                 <Trash2 className={styles.buttonIcon} />
                 Yes, Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Preview Modal */}
+      {showUploadModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.uploadModal}>
+            <div className={styles.modalHeader}>
+              <div className={styles.uploadModalTitle}>
+                <FileSpreadsheet className={styles.uploadIcon} />
+                <h4>Upload Preview</h4>
+              </div>
+              <button
+                onClick={() => {
+                  setShowUploadModal(false);
+                  setUploadData([]);
+                }}
+                className={styles.closeButton}
+                disabled={uploadLoading}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className={styles.uploadSummary}>
+              <div className={styles.summaryItem}>
+                <span className={styles.summaryLabel}>Total Rows:</span>
+                <span className={styles.summaryValue}>{uploadData.length}</span>
+              </div>
+              <div className={`${styles.summaryItem} ${styles.valid}`}>
+                <CheckCircle size={16} />
+                <span className={styles.summaryLabel}>Valid:</span>
+                <span className={styles.summaryValue}>{uploadData.filter(r => r.isValid).length}</span>
+              </div>
+              <div className={`${styles.summaryItem} ${styles.invalid}`}>
+                <XCircle size={16} />
+                <span className={styles.summaryLabel}>Invalid:</span>
+                <span className={styles.summaryValue}>{uploadData.filter(r => !r.isValid).length}</span>
+              </div>
+            </div>
+
+            {uploadLoading && (
+              <div className={styles.uploadProgressContainer}>
+                <div className={styles.uploadProgressBar}>
+                  <div
+                    className={styles.uploadProgressFill}
+                    style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                  />
+                </div>
+                <span className={styles.uploadProgressText}>
+                  Uploading {uploadProgress.current} of {uploadProgress.total}...
+                </span>
+              </div>
+            )}
+
+            <div className={styles.uploadTableContainer}>
+              <table className={styles.uploadTable}>
+                <thead>
+                  <tr>
+                    <th>Row</th>
+                    <th>Status</th>
+                    <th>VM Name</th>
+                    <th>IP Address</th>
+                    <th>Username</th>
+                    <th>Project</th>
+                    <th>Cluster</th>
+                    <th>Errors</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {uploadData.map((row, index) => (
+                    <tr key={index} className={row.isValid ? styles.validRow : styles.invalidRow}>
+                      <td>{row.rowIndex}</td>
+                      <td>
+                        {row.isValid ? (
+                          <CheckCircle size={16} className={styles.validIcon} />
+                        ) : (
+                          <XCircle size={16} className={styles.invalidIcon} />
+                        )}
+                      </td>
+                      <td>{row.vm_name || '-'}</td>
+                      <td>{row.ip || '-'}</td>
+                      <td>{row.username || '-'}</td>
+                      <td>{row.project_name || '-'}</td>
+                      <td>{row.cluster || '-'}</td>
+                      <td className={styles.errorCell}>
+                        {row.errors.length > 0 ? row.errors.join(', ') : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className={styles.uploadActions}>
+              <button
+                onClick={handleDownloadTemplate}
+                className={styles.templateButton}
+                disabled={uploadLoading}
+              >
+                <Download size={16} />
+                Download Template
+              </button>
+              <div className={styles.uploadActionButtons}>
+                <button
+                  onClick={() => {
+                    setShowUploadModal(false);
+                    setUploadData([]);
+                  }}
+                  className={styles.cancelButton}
+                  disabled={uploadLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUploadConfirm}
+                  className={styles.confirmUploadButton}
+                  disabled={uploadLoading || uploadData.filter(r => r.isValid).length === 0}
+                >
+                  <Upload size={16} />
+                  {uploadLoading ? 'Uploading...' : `Upload ${uploadData.filter(r => r.isValid).length} VMs`}
+                </button>
+              </div>
             </div>
           </div>
         </div>

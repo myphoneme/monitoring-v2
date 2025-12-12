@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Server, 
-  CheckCircle, 
-  XCircle, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  Server,
+  CheckCircle,
+  XCircle,
+  TrendingUp,
+  TrendingDown,
   AlertTriangle,
   Info,
   Clock,
@@ -21,8 +21,10 @@ import {
   Search,
   RefreshCw,
   Filter,
-  FolderOpen
+  FolderOpen,
+  Download
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { fetchVMMasterData, fetchRealtimePingStatus } from '../../services/api';
 import { getLast30Days, formatDateForDisplay, formatDateForAPI, getTodayFormatted } from '../../utils/dateUtils';
 import styles from '../../styles/MonitoringGrid.module.css';
@@ -419,7 +421,7 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
 
     // Get the latest status for this hour
     const latestStatus = hourData.sort((a, b) => new Date(b.current_time) - new Date(a.current_time))[0];
-    
+
     const iconProps = {
       className: styles.statusIcon,
       onClick: () => setSelectedModal(latestStatus)
@@ -433,11 +435,12 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
       case 'still down':
         return <XCircle {...iconProps} style={{ color: '#e5512a' }} title="Still Down" />;
       case 'no change':
-        return latestStatus.current_status === 'reachable' 
-          ? <CheckCircle {...iconProps} style={{ color: '#10b981' }} title="Reachable" />
-          : <XCircle {...iconProps} style={{ color: '#ff6b35' }} title="Unreachable" />;
+      case 'new':
       default:
-        return <Info {...iconProps} style={{ color: '#ffd700' }} title="New" />;
+        // For 'no change', 'new', or any other status, show based on current_status
+        return latestStatus.current_status === 'reachable'
+          ? <CheckCircle {...iconProps} style={{ color: '#10b981' }} title="Reachable" />
+          : <XCircle {...iconProps} style={{ color: '#ef4444' }} title="Unreachable" />;
     }
   };
   
@@ -531,6 +534,95 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
     setProjectFilter('all');
   };
 
+  // Export grid data to Excel
+  const exportToExcel = () => {
+    // Helper function to get status symbol for Excel
+    const getStatusSymbol = (statusChange, currentStatus) => {
+      switch (statusChange) {
+        case 'came back':
+          return '↑ Came Back';
+        case 'went down':
+          return '↓ Went Down';
+        case 'still down':
+          return '✗ Still Down';
+        case 'no change':
+        case 'new':
+        default:
+          // For 'no change', 'new', or any other status, show based on current_status
+          return currentStatus === 'reachable' ? '✓ Reachable' : '✗ Unreachable';
+      }
+    };
+
+    // Prepare data for Excel
+    const excelData = [];
+
+    // Get all VMs from gridData
+    Object.entries(gridData).forEach(([vmKey, vmData]) => {
+      const row = {
+        'VM Name': vmData.vm_name,
+        'IP Address': vmData.ip,
+        'Project': vmData.project || 'N/A',
+        'Cluster': vmData.cluster || 'N/A',
+      };
+
+      // Add AM hours (12 AM to 11 AM)
+      const amHours = getHoursForMode('AM');
+      amHours.forEach(hour => {
+        const hourData = vmData.hourlyData[hour];
+        if (hourData && hourData.length > 0) {
+          // Only show data if there's actual hourly data
+          const latestStatus = hourData.sort((a, b) => new Date(b.current_time) - new Date(a.current_time))[0];
+          row[hour] = getStatusSymbol(latestStatus.status_change, latestStatus.current_status);
+        } else {
+          // No data available for this hour - leave empty
+          row[hour] = '';
+        }
+      });
+
+      // Add PM hours (12 PM to 11 PM)
+      const pmHours = getHoursForMode('PM');
+      pmHours.forEach(hour => {
+        const hourData = vmData.hourlyData[hour];
+        if (hourData && hourData.length > 0) {
+          // Only show data if there's actual hourly data
+          const latestStatus = hourData.sort((a, b) => new Date(b.current_time) - new Date(a.current_time))[0];
+          row[hour] = getStatusSymbol(latestStatus.status_change, latestStatus.current_status);
+        } else {
+          // No data available for this hour - leave empty
+          row[hour] = '';
+        }
+      });
+
+      excelData.push(row);
+    });
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const columnWidths = [
+      { wch: 25 }, // VM Name
+      { wch: 15 }, // IP Address
+      { wch: 20 }, // Project
+      { wch: 15 }, // Cluster
+    ];
+    // Add widths for all 24 hours
+    for (let i = 0; i < 24; i++) {
+      columnWidths.push({ wch: 14 });
+    }
+    worksheet['!cols'] = columnWidths;
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'VM Monitoring');
+
+    // Generate filename with selected date
+    const filename = `VM_Monitoring_${selectedDate}.xlsx`;
+
+    // Download the file
+    XLSX.writeFile(workbook, filename);
+  };
+
   return (
     <div className={styles.monitoringGrid}>
       {/* Combined Control Panel */}
@@ -609,6 +701,16 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
             >
               <RefreshCw className={loading ? styles.spinning : ''} />
               Refresh
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className={styles.downloadButton}
+              disabled={Object.keys(gridData).length === 0}
+              title="Download Excel"
+            >
+              <Download />
+              Download Excel
             </button>
           </div>
 

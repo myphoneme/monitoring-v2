@@ -211,6 +211,38 @@
   cursor: not-allowed;
 }
 
+.downloadButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 11px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.downloadButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.downloadButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.downloadButton svg {
+  width: 14px;
+  height: 14px;
+}
+
 .searchContainer {
   position: relative;
   flex: 1;
