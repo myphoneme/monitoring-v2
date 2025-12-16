@@ -58,6 +58,11 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Reset pagination to page 1 when any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, onlineFilter, severityFilter, projectFilter]);
+
   // Load VM master data on component mount
   useEffect(() => {
     const loadVMMasterData = async () => {
@@ -938,18 +943,58 @@ const MonitoringGrid = ({ dashboardData, vmStatusData, onRefresh }) => {
             </button>
 
             <div className={styles.pageNumbers}>
-              {Array.from(
-                { length: Math.ceil(Object.keys(gridData).length / itemsPerPage) },
-                (_, i) => i + 1
-              ).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ''}`}
-                >
-                  {page}
-                </button>
-              ))}
+              {(() => {
+                const totalPages = Math.ceil(Object.keys(gridData).length / itemsPerPage);
+                const pages = [];
+                const siblingCount = 1; // Number of pages to show on each side of current page
+
+                // Helper to add page button
+                const addPage = (pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`${styles.pageNumber} ${currentPage === pageNum ? styles.activePage : ''}`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+
+                // Helper to add ellipsis
+                const addEllipsis = (key) => (
+                  <span key={key} className={styles.paginationEllipsis}>...</span>
+                );
+
+                // Always show first page
+                pages.push(addPage(1));
+
+                // Calculate range around current page
+                const leftSibling = Math.max(2, currentPage - siblingCount);
+                const rightSibling = Math.min(totalPages - 1, currentPage + siblingCount);
+
+                // Add left ellipsis if needed
+                if (leftSibling > 2) {
+                  pages.push(addEllipsis('left-ellipsis'));
+                }
+
+                // Add pages around current page
+                for (let i = leftSibling; i <= rightSibling; i++) {
+                  if (i !== 1 && i !== totalPages) {
+                    pages.push(addPage(i));
+                  }
+                }
+
+                // Add right ellipsis if needed
+                if (rightSibling < totalPages - 1) {
+                  pages.push(addEllipsis('right-ellipsis'));
+                }
+
+                // Always show last page (if more than 1 page)
+                if (totalPages > 1) {
+                  pages.push(addPage(totalPages));
+                }
+
+                return pages;
+              })()}
             </div>
 
             <button

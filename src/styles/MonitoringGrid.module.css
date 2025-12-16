@@ -1329,6 +1329,15 @@
   box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
 }
 
+.paginationEllipsis {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555555;
+  user-select: none;
+  letter-spacing: 2px;
+}
+
 .itemsPerPageSelector {
   display: flex;
   align-items: center;
@@ -1421,4 +1430,74 @@
   100% {
     box-shadow: 0 0 0 0 rgba(100, 116, 139, 0);
   }
+}
+
+/* Dark Mode Pagination Styles */
+:global(.dark) .paginationContainer {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  border-top: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark) .paginationInfo {
+  color: #cbd5e1;
+}
+
+:global(.dark) .paginationButton {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  color: #f1f5f9;
+}
+
+:global(.dark) .paginationButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  border-color: #ff8f65;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .paginationButton:disabled {
+  background: #334155;
+  opacity: 0.4;
+}
+
+:global(.dark) .pageNumber {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  color: #f1f5f9;
+}
+
+:global(.dark) .pageNumber:hover {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  border-color: #ff8f65;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .pageNumber.activePage {
+  background: linear-gradient(135deg, #ff8f65 0%, #ff6b35 100%);
+  border-color: #ff8f65;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(255, 143, 101, 0.3);
+}
+
+:global(.dark) .paginationEllipsis {
+  color: #cbd5e1;
+}
+
+:global(.dark) .itemsPerPageSelector {
+  color: #cbd5e1;
+}
+
+:global(.dark) .itemsPerPageSelect {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border: 2px solid #475569;
+  color: #f1f5f9;
+}
+
+:global(.dark) .itemsPerPageSelect:focus {
+  border-color: #ff8f65;
+  box-shadow: 0 0 0 3px rgba(255, 143, 101, 0.1);
+  background: #1e293b;
 }
